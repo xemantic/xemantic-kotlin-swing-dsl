@@ -234,6 +234,14 @@ fun JTextField.observeActions(): Observable<ActionEvent> {
   }
 }
 
+fun JRadioButton.observeActions(): Observable<ActionEvent> {
+  return Observable.create { emitter ->
+    val listener = ActionListener { e -> emitter.onNext(e) }
+    addActionListener(listener)
+    emitter.setCancellable { removeActionListener(listener) }
+  }
+}
+
 fun JTextField.observeTextChanges(): Observable<DocumentEvent> {
   return Observable.create { emitter ->
     val listener = object : DocumentListener {
