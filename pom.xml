@@ -24,7 +24,7 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.xemantic.ui</groupId>
+  <groupId>com.xemantic.kotlin</groupId>
   <artifactId>xemantic-kotlin-swing-dsl</artifactId>
   <version>1.0-SNAPSHOT</version>
 
@@ -87,6 +87,19 @@
         <configuration>
           <jvmTarget>${maven.compiler.source}</jvmTarget>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
