@@ -1,10 +1,14 @@
 package com.xemantic.kotlin.swing
 
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Observer
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.disposables.Disposable
 import java.awt.*
+import java.awt.event.ActionEvent
+import java.awt.event.ActionListener
 import java.util.concurrent.TimeUnit
+import java.util.function.BiFunction
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
@@ -212,32 +216,35 @@ class DefaultJComponentFactory : JComponentFactory {
 
 }
 
-@FunctionalInterface
-interface TextChangeListener : DocumentListener {
 
-  fun onChange(text: String)
 
-  override fun insertUpdate(e: DocumentEvent) { fireChange(e) }
-
-  override fun removeUpdate(e: DocumentEvent) { fireChange(e) }
-
-  override fun changedUpdate(e: DocumentEvent) { fireChange(e) }
-
-  private fun fireChange(e: DocumentEvent) {
-    onChange(e.document.getText(0, e.document.length))
+fun JButton.observeActions(): Observable<ActionEvent> {
+  return Observable.create { emitter ->
+    val listener = ActionListener { e -> emitter.onNext(e) }
+    addActionListener(listener)
+    emitter.setCancellable { removeActionListener(listener) }
   }
-
 }
 
-fun JTextField.observeTextChange(observer: Observer<String>) {
-  document.addDocumentListener(object : DocumentListener {
-    override fun insertUpdate(e: DocumentEvent) { fireChange(e) }
-    override fun removeUpdate(e: DocumentEvent) { fireChange(e) }
-    override fun changedUpdate(e: DocumentEvent) { fireChange(e) }
-    private fun fireChange(e: DocumentEvent) {
-      observer.onNext(e.document.getText(0, e.document.length))
+fun JTextField.observeActions(): Observable<ActionEvent> {
+  return Observable.create { emitter ->
+    val listener = ActionListener { e -> emitter.onNext(e) }
+    addActionListener(listener)
+    emitter.setCancellable { removeActionListener(listener) }
+  }
+}
+
+fun JTextField.observeTextChanges(): Observable<DocumentEvent> {
+  return Observable.create { emitter ->
+    val listener = object : DocumentListener {
+      override fun insertUpdate(e: DocumentEvent) { fireChange(e) }
+      override fun removeUpdate(e: DocumentEvent) { fireChange(e) }
+      override fun changedUpdate(e: DocumentEvent) { fireChange(e) }
+      private fun fireChange(e: DocumentEvent) { emitter.onNext(e) }
     }
-  })
+    document.addDocumentListener(listener)
+    emitter.setCancellable { document.removeDocumentListener(listener) }
+  }
 }
 
 val swingScheduler = SwingScheduler()

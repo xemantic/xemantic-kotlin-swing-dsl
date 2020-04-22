@@ -19,8 +19,10 @@
 
 package com.xemantic.kotlin.swing
 
+import io.reactivex.rxjava3.functions.BiFunction
 import io.reactivex.rxjava3.subjects.PublishSubject
 import java.awt.Dimension
+import java.awt.event.ActionEvent
 import javax.swing.BorderFactory
 import javax.swing.SwingConstants
 
@@ -31,13 +33,23 @@ fun main() = mainFrame("My Browser") {
     north = borderPanel {
       west = label("URL")
       center = textField(10) {
-        addActionListener { newUrlEvents.onNext(text) }
-        observeTextChange(urlEditEvents)
+        observeTextChanges()
+            .map { text }
+            .doOnEach(urlEditEvents)
+            .subscribe()
+        observeActions()
+            .map { text }
+            .doOnEach(newUrlEvents)
+            .subscribe()
       }
       east = button("Go!") {
-        var latestUrl = ""
-        urlEditEvents.subscribe { url -> latestUrl = url }
-        addActionListener { newUrlEvents.onNext(latestUrl) }
+        observeActions()
+            .withLatestFrom(
+                urlEditEvents,
+                BiFunction { _: ActionEvent, url: String -> url }
+            )
+            .doOnEach(newUrlEvents)
+            .subscribe()
       }
       layout.hgap = 4
       panel.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
