@@ -28,12 +28,11 @@ fun main() = mainFrame("My Browser") {
   val urlEditEvents = PublishSubject.create<String>()
   contentPane = borderPanel {
     north = borderPanel {
-      val addressBox = textField(10) {
+      west = label("URL")
+      center = textField(10) {
         addActionListener { newUrlEvents.onNext(text) }
         observeTextChange(urlEditEvents)
       }
-      west = label("URL")
-      center = addressBox
       east = button("Go!") {
         var latestUrl = ""
         urlEditEvents.subscribe { url -> latestUrl = url }

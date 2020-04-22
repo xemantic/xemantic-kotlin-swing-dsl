@@ -19,12 +19,11 @@ fun main() = mainFrame("My Browser") {
   val urlEditEvents = PublishSubject.create<String>()
   contentPane = borderPanel {
     north = borderPanel {
-      val addressBox = textField(10) {
+      west = label("URL")
+      center = textField(10) {
         addActionListener { newUrlEvents.onNext(text) }
         observeTextChange(urlEditEvents)
       }
-      west = label("URL")
-      center = addressBox
       east = button("Go!") {
         var latestUrl = ""
         urlEditEvents.subscribe { url -> latestUrl = url }
@@ -44,10 +43,11 @@ fun main() = mainFrame("My Browser") {
 
 Benefits:
 
-* compact code
+* compact code, minimal verbosity
 * declarative instead of imperative
-* functional reactive programming way of handling events
-* 
+* functional reactive programming way of handling events (RxJava)
+* component encapsulation, communication through well defined event streams
+* `swingScheduler` for receiving asynchronously produced events (see below)
 
 End here equivalent code in Java for the sake of comparison:
 
