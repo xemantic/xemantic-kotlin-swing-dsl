@@ -29,6 +29,8 @@ fun main() = mainFrame("My Browser") {
         urlEditEvents.subscribe { url -> latestUrl = url }
         addActionListener { newUrlEvents.onNext(latestUrl) }
       }
+      layout.hgap = 4
+      panel.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
     }
     center = label {
       horizontalAlignment = SwingConstants.CENTER
@@ -40,6 +42,10 @@ fun main() = mainFrame("My Browser") {
   }
 }
 ```
+
+Will produce:
+
+![example app image](docs/xemantic-kotlin-swing-dsl-example.png)
 
 Benefits:
 

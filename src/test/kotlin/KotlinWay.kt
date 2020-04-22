@@ -21,6 +21,7 @@ package com.xemantic.kotlin.swing
 
 import io.reactivex.rxjava3.subjects.PublishSubject
 import java.awt.Dimension
+import javax.swing.BorderFactory
 import javax.swing.SwingConstants
 
 fun main() = mainFrame("My Browser") {
@@ -38,6 +39,8 @@ fun main() = mainFrame("My Browser") {
         urlEditEvents.subscribe { url -> latestUrl = url }
         addActionListener { newUrlEvents.onNext(latestUrl) }
       }
+      layout.hgap = 4
+      panel.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
     }
     center = label {
       horizontalAlignment = SwingConstants.CENTER

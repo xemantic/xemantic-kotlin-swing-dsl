@@ -22,6 +22,7 @@ package com.xemantic.kotlin.swing;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.lang.reflect.InvocationTargetException;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -56,8 +57,9 @@ public class JavaWay {
 
             JPanel contentPanel = new JPanel(new BorderLayout());
 
-            JPanel northContent = new JPanel(new BorderLayout());
+            JPanel northContent = new JPanel(new BorderLayout(4, 0));
             northContent.add(new JLabel(("URL")), BorderLayout.WEST);
+            northContent.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
             JTextField urlBox = new JTextField(10);
             urlBox.addActionListener(e -> onNewUrl(urlBox.getText()));
