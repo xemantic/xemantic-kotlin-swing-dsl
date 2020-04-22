@@ -2,10 +2,12 @@
 Express your swing code easily in kotlin
 
 This project was born when I had an urgent need to quickly provide a simple 
-UI for remote Java application - a remote control for my Robot talking over OSC
-protocol already coded in Kotlin with functional reactive programming in mind.
-I remember coding GUI in Swing years ago and I remember what I liked about it
-and what was painful. Fortunately now I also have experience in building
+UI for remote Java application. I needed a remote control for my Robot,
+talking over OSC protocol, already coded in Kotlin and based on
+[functional reactive programming](https://en.wikipedia.org/wiki/Functional_reactive_programming)
+principles. I decided to go for Swing, to stay in the same ecosystem, but I remember
+the experience of coding GUI in Swing years ago, and I remember what I liked about it
+and what was painful. Fortunately now I also have the experience of building
 Domain Specific Languages in Kotlin and I quickly realized that I can finally
 swing the way I always wanted to.
 
@@ -149,6 +151,6 @@ fun main() = mainFrame("SwingScheduler example") {
 The `ticks` can be seen as an event pipeline, `Observable.interval` will publish events to it every
 second, but it runs on so called computation scheduler of RxJava library by default. For this reason
 we do `tick.observeOn(swingScheduler)` which will guarantee that actual reaction to the tick will
-happen in the swing thread. It is not needed most of the time as the default scheduler
-for receiving the events will be the same as the one used for publishing them, which is already
-swing event thread.
+happen in the Swing thread. It is not needed most of the time as the default scheduler
+for receiving the events will be usually the same as the one used for publishing them, and this one
+is already the Swing event thread.
