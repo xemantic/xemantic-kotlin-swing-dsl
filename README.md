@@ -22,7 +22,6 @@ fun main() = mainFrame("My Browser") {
       west = label("URL")
       center = textField(10) {
         observeTextChanges()
-            .map { text }
             .doOnEach(urlEditEvents)
             .subscribe()
         observeActions()

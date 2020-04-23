@@ -1,28 +1,26 @@
 package com.xemantic.kotlin.swing
 
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Observer
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.disposables.Disposable
 import java.awt.*
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
+import java.awt.event.MouseEvent
+import java.awt.event.MouseListener
 import java.util.concurrent.TimeUnit
-import java.util.function.BiFunction
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
 private val factory = DefaultJComponentFactory()
 
-fun mainFrame(title: String, build: JFrame.() -> Unit) {
-  SwingUtilities.invokeAndWait {
-    val frame = JFrame(title)
-    build(frame)
-    frame.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
-    frame.pack()
-    frame.isVisible = true
-  }
+fun mainFrame(title: String, build: JFrame.() -> Unit) = SwingUtilities.invokeAndWait {
+  val frame = JFrame(title)
+  build(frame)
+  frame.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
+  frame.pack()
+  frame.isVisible = true
 }
 
 fun borderPanel(build: BorderPanelBuilder.() -> Unit) : JPanel =
@@ -218,42 +216,51 @@ class DefaultJComponentFactory : JComponentFactory {
 
 
 
-fun JButton.observeActions(): Observable<ActionEvent> {
-  return Observable.create { emitter ->
-    val listener = ActionListener { e -> emitter.onNext(e) }
-    addActionListener(listener)
-    emitter.setCancellable { removeActionListener(listener) }
-  }
+fun JButton.observeActions(): Observable<ActionEvent> = Observable.create { emitter ->
+  val listener = ActionListener { e -> emitter.onNext(e) }
+  addActionListener(listener)
+  emitter.setCancellable { removeActionListener(listener) }
 }
 
-fun JTextField.observeActions(): Observable<ActionEvent> {
-  return Observable.create { emitter ->
-    val listener = ActionListener { e -> emitter.onNext(e) }
-    addActionListener(listener)
-    emitter.setCancellable { removeActionListener(listener) }
+fun JButton.observeMouse(): Observable<MouseEvent> = Observable.create { emitter ->
+  val listener = object : MouseListener {
+    override fun mouseClicked(e: MouseEvent) { fireChange(e) }
+    override fun mouseEntered(e: MouseEvent) { fireChange(e) }
+    override fun mouseExited(e: MouseEvent) { fireChange(e) }
+    override fun mousePressed(e: MouseEvent) { fireChange(e) }
+    override fun mouseReleased(e: MouseEvent) { fireChange(e) }
+    private fun fireChange(e: MouseEvent) { emitter.onNext(e) }
   }
+  addMouseListener(listener)
+  emitter.setCancellable { removeMouseListener(listener) }
 }
 
-fun JRadioButton.observeActions(): Observable<ActionEvent> {
-  return Observable.create { emitter ->
-    val listener = ActionListener { e -> emitter.onNext(e) }
-    addActionListener(listener)
-    emitter.setCancellable { removeActionListener(listener) }
-  }
+fun JTextField.observeActions(): Observable<ActionEvent> = Observable.create { emitter ->
+  val listener = ActionListener { e -> emitter.onNext(e) }
+  addActionListener(listener)
+  emitter.setCancellable { removeActionListener(listener) }
 }
 
-fun JTextField.observeTextChanges(): Observable<DocumentEvent> {
-  return Observable.create { emitter ->
-    val listener = object : DocumentListener {
-      override fun insertUpdate(e: DocumentEvent) { fireChange(e) }
-      override fun removeUpdate(e: DocumentEvent) { fireChange(e) }
-      override fun changedUpdate(e: DocumentEvent) { fireChange(e) }
-      private fun fireChange(e: DocumentEvent) { emitter.onNext(e) }
-    }
-    document.addDocumentListener(listener)
-    emitter.setCancellable { document.removeDocumentListener(listener) }
-  }
+fun JRadioButton.observeActions(): Observable<ActionEvent> = Observable.create { emitter ->
+  val listener = ActionListener { e -> emitter.onNext(e) }
+  addActionListener(listener)
+  emitter.setCancellable { removeActionListener(listener) }
 }
+
+fun JTextField.observeDocumentChanges(): Observable<DocumentEvent> = Observable.create { emitter ->
+  val listener = object : DocumentListener {
+    override fun insertUpdate(e: DocumentEvent) { fireChange(e) }
+    override fun removeUpdate(e: DocumentEvent) { fireChange(e) }
+    override fun changedUpdate(e: DocumentEvent) { fireChange(e) }
+    private fun fireChange(e: DocumentEvent) { emitter.onNext(e) }
+  }
+  document.addDocumentListener(listener)
+  emitter.setCancellable { document.removeDocumentListener(listener) }
+}
+
+fun JTextField.observeTextChanges(): Observable<String> = observeDocumentChanges().map { text }
+
+
 
 val swingScheduler = SwingScheduler()
 
