@@ -214,51 +214,74 @@ class DefaultJComponentFactory : JComponentFactory {
 
 }
 
+// TODO all these properties should be probably cached
 
-
-fun JButton.observeActions(): Observable<ActionEvent> = Observable.create { emitter ->
-  val listener = ActionListener { e -> emitter.onNext(e) }
-  addActionListener(listener)
-  emitter.setCancellable { removeActionListener(listener) }
-}
-
-fun JButton.observeMouse(): Observable<MouseEvent> = Observable.create { emitter ->
-  val listener = object : MouseListener {
-    override fun mouseClicked(e: MouseEvent) { fireChange(e) }
-    override fun mouseEntered(e: MouseEvent) { fireChange(e) }
-    override fun mouseExited(e: MouseEvent) { fireChange(e) }
-    override fun mousePressed(e: MouseEvent) { fireChange(e) }
-    override fun mouseReleased(e: MouseEvent) { fireChange(e) }
-    private fun fireChange(e: MouseEvent) { emitter.onNext(e) }
+val JButton.actionEvents: Observable<ActionEvent>
+  get() = Observable.create { emitter ->
+    val listener = ActionListener { e -> emitter.onNext(e) }
+    addActionListener(listener)
+    emitter.setCancellable { removeActionListener(listener) }
   }
-  addMouseListener(listener)
-  emitter.setCancellable { removeMouseListener(listener) }
-}
 
-fun JTextField.observeActions(): Observable<ActionEvent> = Observable.create { emitter ->
-  val listener = ActionListener { e -> emitter.onNext(e) }
-  addActionListener(listener)
-  emitter.setCancellable { removeActionListener(listener) }
-}
+val JButton.mouseEvents: Observable<MouseEvent>
+  get() = Observable.create { emitter ->
+    val listener = object : MouseListener {
+      override fun mouseClicked(e: MouseEvent) {
+        fireChange(e)
+      }
 
-fun JRadioButton.observeActions(): Observable<ActionEvent> = Observable.create { emitter ->
-  val listener = ActionListener { e -> emitter.onNext(e) }
-  addActionListener(listener)
-  emitter.setCancellable { removeActionListener(listener) }
-}
+      override fun mouseEntered(e: MouseEvent) {
+        fireChange(e)
+      }
 
-fun JTextField.observeDocumentChanges(): Observable<DocumentEvent> = Observable.create { emitter ->
-  val listener = object : DocumentListener {
-    override fun insertUpdate(e: DocumentEvent) { fireChange(e) }
-    override fun removeUpdate(e: DocumentEvent) { fireChange(e) }
-    override fun changedUpdate(e: DocumentEvent) { fireChange(e) }
-    private fun fireChange(e: DocumentEvent) { emitter.onNext(e) }
+      override fun mouseExited(e: MouseEvent) {
+        fireChange(e)
+      }
+
+      override fun mousePressed(e: MouseEvent) {
+        fireChange(e)
+      }
+
+      override fun mouseReleased(e: MouseEvent) {
+        fireChange(e)
+      }
+
+      private fun fireChange(e: MouseEvent) {
+        emitter.onNext(e)
+      }
+    }
+    addMouseListener(listener)
+    emitter.setCancellable { removeMouseListener(listener) }
   }
-  document.addDocumentListener(listener)
-  emitter.setCancellable { document.removeDocumentListener(listener) }
-}
 
-fun JTextField.observeTextChanges(): Observable<String> = observeDocumentChanges().map { text }
+val JTextField.actionEvents: Observable<ActionEvent>
+  get() = Observable.create { emitter ->
+    val listener = ActionListener { e -> emitter.onNext(e) }
+    addActionListener(listener)
+    emitter.setCancellable { removeActionListener(listener) }
+  }
+
+val JRadioButton.actionEvents: Observable<ActionEvent>
+  get() = Observable.create { emitter ->
+    val listener = ActionListener { e -> emitter.onNext(e) }
+    addActionListener(listener)
+    emitter.setCancellable { removeActionListener(listener) }
+  }
+
+val JTextField.documentChanges: Observable<DocumentEvent>
+  get() = Observable.create { emitter ->
+    val listener = object : DocumentListener {
+      override fun insertUpdate(e: DocumentEvent) { fireChange(e) }
+      override fun removeUpdate(e: DocumentEvent) { fireChange(e) }
+      override fun changedUpdate(e: DocumentEvent) { fireChange(e) }
+      private fun fireChange(e: DocumentEvent) { emitter.onNext(e) }
+    }
+    document.addDocumentListener(listener)
+    emitter.setCancellable { document.removeDocumentListener(listener) }
+  }
+
+val JTextField.textChanges: Observable<String>
+  get() = documentChanges.map { text }
 
 
 

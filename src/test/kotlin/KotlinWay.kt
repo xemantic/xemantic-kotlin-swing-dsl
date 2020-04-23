@@ -35,11 +35,11 @@ fun main() = mainFrame("My Browser") {
     north = borderPanel {
       west = label("URL")
       center = textField(10) {
-        observeTextChanges().subscribe(urlEditEvents)
-        observeActions().map { text }.subscribe(newUrlEvents)
+        textChanges.subscribe(urlEditEvents)
+        actionEvents.map { text }.subscribe(newUrlEvents)
       }
       east = button("Go!") {
-        observeActions()
+        actionEvents
             .withLatestFrom(
                 urlEditEvents,
                 BiFunction { _: ActionEvent, url: String -> url }
