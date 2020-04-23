@@ -33,8 +33,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 
 public class JavaWay {
 
@@ -62,6 +60,12 @@ public class JavaWay {
             northContent.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
             JTextField urlBox = new JTextField(10);
+            JButton button = new JButton("Go!");
+            button.setEnabled(false);
+
+            button.addActionListener(e -> onNewUrl(urlBox.getText()));
+            northContent.add(button, BorderLayout.EAST);
+
             urlBox.addActionListener(e -> onNewUrl(urlBox.getText()));
             urlBox
                 .getDocument()
@@ -83,20 +87,14 @@ public class JavaWay {
                       }
 
                       private void fireChange(DocumentEvent e) {
-                        Document document = e.getDocument();
-                        try {
-                          String text = document.getText(0, document.getLength());
-                          displayLabel.setText("Will try: " + text);
-                        } catch (BadLocationException ex) {
-                          ex.printStackTrace(); // should never happen
-                        }
+                        String text = urlBox.getText();
+                        displayLabel.setText("Will try: " + text);
+                        button.setEnabled(!text.trim().isEmpty());
                       }
                     });
             northContent.add(urlBox, BorderLayout.CENTER);
 
-            JButton button = new JButton("Go!");
-            button.addActionListener(e -> onNewUrl(urlBox.getText()));
-            northContent.add(button, BorderLayout.EAST);
+
 
             contentPanel.add(northContent, BorderLayout.NORTH);
             contentPanel.add(displayLabel, BorderLayout.CENTER);

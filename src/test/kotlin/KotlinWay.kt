@@ -30,16 +30,13 @@ fun main() = mainFrame("My Browser") {
   val newUrlEvents = PublishSubject.create<String>()
   val urlEditEvents = PublishSubject.create<String>()
   contentPane = borderPanel {
+    layout.hgap = 4
+    panel.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
     north = borderPanel {
       west = label("URL")
       center = textField(10) {
-        observeTextChanges()
-            .doOnEach(urlEditEvents)
-            .subscribe()
-        observeActions()
-            .map { text }
-            .doOnEach(newUrlEvents)
-            .subscribe()
+        observeTextChanges().subscribe(urlEditEvents)
+        observeActions().map { text }.subscribe(newUrlEvents)
       }
       east = button("Go!") {
         observeActions()
@@ -47,11 +44,9 @@ fun main() = mainFrame("My Browser") {
                 urlEditEvents,
                 BiFunction { _: ActionEvent, url: String -> url }
             )
-            .doOnEach(newUrlEvents)
-            .subscribe()
+            .subscribe(newUrlEvents)
+        urlEditEvents.subscribe { url -> isEnabled = url.isNotBlank() }
       }
-      layout.hgap = 4
-      panel.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
     }
     center = label {
       horizontalAlignment = SwingConstants.CENTER
@@ -61,4 +56,5 @@ fun main() = mainFrame("My Browser") {
       newUrlEvents.subscribe { value -> text = "Cannot load: $value" }
     }
   }
+  urlEditEvents.onNext("") // makes sure we receive the first empty url
 }

@@ -34,5 +34,5 @@ fun main() = mainFrame("SwingScheduler example") {
     horizontalAlignment = SwingConstants.CENTER
   }
   Observable.interval(1, TimeUnit.SECONDS)
-      .subscribe { tick -> ticks.onNext(tick) }
+      .subscribe(ticks)
 }
