@@ -26,13 +26,13 @@ fun mainFrame(title: String, build: JFrame.() -> Unit) = SwingUtilities.invokeAn
 fun borderPanel(build: BorderPanelBuilder.() -> Unit) : JPanel =
     factory.borderPanel(build)
 
-fun flowPanel(build: PanelBuilder<FlowLayout>.() -> Unit) : JPanel =
+fun flowPanel(build: DefaultPanelBuilder<FlowLayout>.() -> Unit) : JPanel =
     factory.flowPanel(build)
 
-fun verticalPanel(build: PanelBuilder<BoxLayout>.() -> Unit) : JPanel =
+fun verticalPanel(build: DefaultPanelBuilder<BoxLayout>.() -> Unit) : JPanel =
     factory.verticalPanel(build)
 
-fun grid(rows: Int, cols: Int, build: PanelBuilder<GridLayout>.() -> Unit): JPanel =
+fun grid(rows: Int, cols: Int, build: DefaultPanelBuilder<GridLayout>.() -> Unit): JPanel =
     factory.grid(rows, cols, build)
 
 fun button(label: String, build: (JButton.() -> Unit)? = null) : JButton =
@@ -47,7 +47,11 @@ fun textField(columns: Int, build: (JTextField.() -> Unit)? = null) : JTextField
 fun <T : JComponent> border(title: String, build: () -> T): T =
     factory.border(title, build)
 
-class BorderPanelBuilder(val panel: JPanel) {
+interface PanelBuilder {
+  val panel: JPanel
+}
+
+class BorderPanelBuilder(override val panel: JPanel) : PanelBuilder {
   var north: JComponent
     get() = throw NotImplementedError()
     set(value) = panel.add(value, BorderLayout.NORTH)
@@ -70,11 +74,11 @@ interface JComponentFactory {
 
   fun borderPanel(build: BorderPanelBuilder.() -> Unit): JPanel
 
-  fun flowPanel(build: PanelBuilder<FlowLayout>.() -> Unit): JPanel
+  fun flowPanel(build: DefaultPanelBuilder<FlowLayout>.() -> Unit): JPanel
 
-  fun verticalPanel(build: PanelBuilder<BoxLayout>.() -> Unit): JPanel
+  fun verticalPanel(build: DefaultPanelBuilder<BoxLayout>.() -> Unit): JPanel
 
-  fun grid(rows: Int, cols: Int, build: PanelBuilder<GridLayout>.() -> Unit): JPanel
+  fun grid(rows: Int, cols: Int, build: DefaultPanelBuilder<GridLayout>.() -> Unit): JPanel
 
   fun button(label: String, build: (JButton.() -> Unit)? = null): JButton
 
@@ -88,7 +92,7 @@ interface JComponentFactory {
 
 }
 
-class PanelBuilder<L: LayoutManager>(val panel: JPanel) : JComponentFactory {
+class DefaultPanelBuilder<L: LayoutManager>(override val panel: JPanel) : PanelBuilder, JComponentFactory {
 
   override fun borderPanel(build: BorderPanelBuilder.() -> Unit): JPanel {
     val component = factory.borderPanel(build)
@@ -96,19 +100,19 @@ class PanelBuilder<L: LayoutManager>(val panel: JPanel) : JComponentFactory {
     return component
   }
 
-  override fun flowPanel(build: PanelBuilder<FlowLayout>.() -> Unit): JPanel {
+  override fun flowPanel(build: DefaultPanelBuilder<FlowLayout>.() -> Unit): JPanel {
     val component = factory.flowPanel(build)
     panel.add(component)
     return component
   }
 
-  override fun verticalPanel(build: PanelBuilder<BoxLayout>.() -> Unit): JPanel {
+  override fun verticalPanel(build: DefaultPanelBuilder<BoxLayout>.() -> Unit): JPanel {
     val component =  factory.verticalPanel(build)
     panel.add(component)
     return component
   }
 
-  override fun grid(rows: Int, cols: Int, build: PanelBuilder<GridLayout>.() -> Unit): JPanel {
+  override fun grid(rows: Int, cols: Int, build: DefaultPanelBuilder<GridLayout>.() -> Unit): JPanel {
     val component =  factory.grid(rows, cols, build)
     panel.add(component)
     return component
@@ -148,8 +152,7 @@ class PanelBuilder<L: LayoutManager>(val panel: JPanel) : JComponentFactory {
     panel.add(component)
   }
 
-  val me = panel
-
+  @Suppress("UNCHECKED_CAST")
   val layout = panel.layout as L
 
 }
@@ -162,23 +165,23 @@ class DefaultJComponentFactory : JComponentFactory {
     return panel
   }
 
-  override fun flowPanel(build: PanelBuilder<FlowLayout>.() -> Unit) : JPanel {
+  override fun flowPanel(build: DefaultPanelBuilder<FlowLayout>.() -> Unit) : JPanel {
     val panel = JPanel()
-    build(PanelBuilder(panel))
+    build(DefaultPanelBuilder(panel))
     return panel
   }
 
-  override fun verticalPanel(build: PanelBuilder<BoxLayout>.() -> Unit) : JPanel {
+  override fun verticalPanel(build: DefaultPanelBuilder<BoxLayout>.() -> Unit) : JPanel {
     val panel = JPanel()
     val layout = BoxLayout(panel, BoxLayout.Y_AXIS)
     panel.layout = layout
-    build(PanelBuilder(panel))
+    build(DefaultPanelBuilder(panel))
     return panel
   }
 
-  override fun grid(rows: Int, cols: Int, build: PanelBuilder<GridLayout>.() -> Unit): JPanel {
+  override fun grid(rows: Int, cols: Int, build: DefaultPanelBuilder<GridLayout>.() -> Unit): JPanel {
     val panel = JPanel(GridLayout(rows, cols))
-    build(PanelBuilder(panel))
+    build(DefaultPanelBuilder(panel))
     return panel
   }
 
