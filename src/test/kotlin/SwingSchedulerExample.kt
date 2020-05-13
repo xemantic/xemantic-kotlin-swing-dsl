@@ -20,19 +20,16 @@
 package com.xemantic.kotlin.swing
 
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.subjects.PublishSubject
 import java.awt.Dimension
 import java.util.concurrent.TimeUnit
 import javax.swing.SwingConstants
 
 fun main() = mainFrame("SwingScheduler example") {
-  val ticks = PublishSubject.create<Long>()
   contentPane = label{
-    ticks.observeOn(swingScheduler)
+    Observable.interval(1, TimeUnit.SECONDS)
+        .observeOn(swingScheduler)
         .subscribe { tick -> text = tick.toString() }
-    preferredSize = Dimension(200, 200)
+    preferredSize = Dimension(100, 100)
     horizontalAlignment = SwingConstants.CENTER
   }
-  Observable.interval(1, TimeUnit.SECONDS)
-      .subscribe(ticks)
 }
