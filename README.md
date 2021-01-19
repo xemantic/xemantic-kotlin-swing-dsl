@@ -5,7 +5,8 @@ This project was born when I had an urgent need to quickly provide a simple
 UI for remote Java application. I needed a remote control for my Robot,
 talking over OSC protocol, already coded in Kotlin and based on
 [functional reactive programming](https://en.wikipedia.org/wiki/Functional_reactive_programming)
-principles. I decided to go for Swing, to stay in the same ecosystem, but I remember
+principles (See [we-are-the-robots](https://github.com/xemantic/we-are-the-robots) on GitHub).
+I decided to go for Swing, to stay in the same ecosystem, but I remember
 the experience of coding GUI in Swing years ago, and I remember what I liked about it
 and what was painful. Fortunately now I also have the experience of building
 Domain Specific Languages in Kotlin and I quickly realized that I can finally
