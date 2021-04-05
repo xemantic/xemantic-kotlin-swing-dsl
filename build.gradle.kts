@@ -54,13 +54,49 @@ tasks {
 }
 
 publishing {
+
+  publications {
+    create<MavenPublication>("mavenJava") {
+      pom {
+        name.set("xemantic-kotlin-swing-dsl")
+        description.set("Kotlin goodies for Java Swing")
+        url.set("https://github.com/xemantic/xemantic-kotlin-swing-dsl")
+
+        licenses {
+          license {
+            name.set("GNU Lesser General Public License 3")
+            url.set("https://www.gnu.org/licenses/lgpl-3.0.en.html")
+          }
+        }
+        developers {
+          developer {
+            id.set("morisil")
+            name.set("Kazik Pogoda")
+            email.set("morisil@xemantic.com")
+          }
+        }
+        scm {
+          url.set("https://github.com/xemantic/xemantic-kotlin-swing-dsl")
+        }
+      }
+    }
+  }
+
   repositories {
+//    maven {
+//      name = "OSSRH"
+//      setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+//      credentials {
+//        username = System.getenv("MAVEN_USERNAME")
+//        password = System.getenv("MAVEN_PASSWORD")
+//      }
+//    }
     maven {
-      name = "sonatype"
-      setUrl("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+      name = "GitHubPackages"
+      setUrl("https://maven.pkg.github.com/xemantic/xemantic-kotlin-swing-dsl")
       credentials {
-        //username = getExtraString("ossrhUsername")
-        //password = getExtraString("ossrhPassword")
+        username = System.getenv("GITHUB_ACTOR")
+        password = System.getenv("GITHUB_TOKEN")
       }
     }
   }
@@ -70,31 +106,10 @@ publishing {
     // Stub javadoc.jar artifact
 //    artifact(javadocJar.get())
 
-    pom {
-      name.set("xemantic-kotlin-swing-dsl")
-      description.set("Kotlin goodies for Java Swing")
-      url.set("https://github.com/xemantic/xemantic-kotlin-swing-dsl")
 
-      licenses {
-        license {
-          name.set("GNU Lesser General Public License 3")
-          url.set("https://www.gnu.org/licenses/lgpl-3.0.en.html")
-        }
-      }
-      developers {
-        developer {
-          id.set("morisil")
-          name.set("Kazik Pogoda")
-          email.set("morisil@xemantic.com")
-        }
-      }
-      scm {
-        url.set("https://github.com/xemantic/xemantic-kotlin-swing-dsl")
-      }
-    }
   }
 }
 
 signing {
-  sign(publishing.publications)
+//  sign(publishing.publications)
 }
