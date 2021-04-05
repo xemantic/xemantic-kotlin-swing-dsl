@@ -1,14 +1,35 @@
+/*
+ * This file is part of xemantic-kotlin-swing-dsl - Kotlin goodies for Java Swing.
+ *
+ * Copyright (C) 2021  Kazimierz Pogoda
+ *
+ * xemantic-kotlin-swing-dsl is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * xemantic-kotlin-swing-dsl is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with xemantic-kotlin-swing-dsl. If not,
+ * see <https://www.gnu.org/licenses/>.
+ */
+
 plugins {
   kotlin("jvm") version "1.4.32"
-  id("org.jetbrains.dokka") version "1.4.30"
+  signing
+  `maven-publish`
 }
 
 group = "com.xemantic.kotlin"
 version = "1.0-SNAPSHOT"
 
-val javaVersion = "1.8"
-val kotlinVersion = "1.4"
-
+val javaCompatibilityVersion = "1.8"
+val kotlinCompatibilityVersion = "1.4"
+val reaktiveVersion = "1.1.21"
 
 repositories {
   mavenCentral()
@@ -16,16 +37,64 @@ repositories {
 }
 
 dependencies {
-  implementation("io.reactivex.rxjava3:rxjava:3.0.11")
+  implementation("com.badoo.reaktive:reaktive:$reaktiveVersion")
 }
 
 tasks {
+
   compileKotlin {
     kotlinOptions {
-      jvmTarget = javaVersion
-      apiVersion = kotlinVersion
-      languageVersion = kotlinVersion
+      jvmTarget = javaCompatibilityVersion
+      apiVersion = kotlinCompatibilityVersion
+      languageVersion = kotlinCompatibilityVersion
     }
-    sourceCompatibility = javaVersion
+    sourceCompatibility = javaCompatibilityVersion
   }
+
+}
+
+publishing {
+  repositories {
+    maven {
+      name = "sonatype"
+      setUrl("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+      credentials {
+        //username = getExtraString("ossrhUsername")
+        //password = getExtraString("ossrhPassword")
+      }
+    }
+  }
+
+  publications.withType<MavenPublication> {
+
+    // Stub javadoc.jar artifact
+//    artifact(javadocJar.get())
+
+    pom {
+      name.set("xemantic-kotlin-swing-dsl")
+      description.set("Kotlin goodies for Java Swing")
+      url.set("https://github.com/xemantic/xemantic-kotlin-swing-dsl")
+
+      licenses {
+        license {
+          name.set("GNU Lesser General Public License 3")
+          url.set("https://www.gnu.org/licenses/lgpl-3.0.en.html")
+        }
+      }
+      developers {
+        developer {
+          id.set("morisil")
+          name.set("Kazik Pogoda")
+          email.set("morisil@xemantic.com")
+        }
+      }
+      scm {
+        url.set("https://github.com/xemantic/xemantic-kotlin-swing-dsl")
+      }
+    }
+  }
+}
+
+signing {
+  sign(publishing.publications)
 }

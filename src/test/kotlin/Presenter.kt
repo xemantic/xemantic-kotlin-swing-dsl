@@ -20,18 +20,41 @@
 
 package com.xemantic.kotlin.swing
 
-import com.badoo.reaktive.observable.observableInterval
+import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.subscribe
-import java.awt.Dimension
-import javax.swing.SwingConstants
 
-fun main() = mainFrame("swingScheduler example") {
-  contentPane = label{
-    observableInterval(1000, swingScheduler)
-      .subscribe { tick ->
-        text = tick.toString()
-      }
-    preferredSize = Dimension(100, 100)
-    horizontalAlignment = SwingConstants.CENTER
+/**
+ * A presenter base.
+ */
+abstract class Presenter<V>(
+  builder: Presenter<V>.Builder.() -> Unit
+) {
+
+  private val starters = mutableListOf<V.() -> Observable<*>>()
+
+  inner class Builder {
+    fun observe(block: V.() -> Observable<*>) {
+      starters.add(block)
+    }
   }
+
+  init {
+    builder(Builder())
+  }
+
+  private val observables = mutableListOf<Observable<*>>()
+
+  private lateinit var subscriptions: List<Disposable>
+
+  fun start(view: V) {
+    subscriptions = starters
+      .map { it(view) }
+      .map { it.subscribe() }
+  }
+
+  fun stop() {
+    subscriptions.forEach { it.dispose() }
+  }
+
 }

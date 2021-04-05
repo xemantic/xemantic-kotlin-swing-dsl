@@ -1,15 +1,38 @@
+/*
+ * This file is part of xemantic-kotlin-swing-dsl - Kotlin goodies for Java Swing.
+ *
+ * Copyright (C) 2021  Kazimierz Pogoda
+ *
+ * xemantic-kotlin-swing-dsl is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * xemantic-kotlin-swing-dsl is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with xemantic-kotlin-swing-dsl. If not,
+ * see <https://www.gnu.org/licenses/>.
+ */
+
 package com.xemantic.kotlin.swing
 
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.disposables.Disposable
+import com.badoo.reaktive.base.setCancellable
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.observable.map
+import com.badoo.reaktive.observable.observable
+import com.badoo.reaktive.scheduler.Scheduler
+import com.badoo.reaktive.scheduler.computationScheduler
 import java.awt.*
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
-import java.util.concurrent.TimeUnit
 import javax.swing.*
+import javax.swing.border.Border
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 import javax.swing.text.JTextComponent
@@ -24,34 +47,39 @@ fun mainFrame(title: String, build: JFrame.() -> Unit) = SwingUtilities.invokeAn
   frame.isVisible = true
 }
 
-fun borderPanel(build: BorderPanelBuilder.() -> Unit) : JPanel =
-    factory.borderPanel(build)
+fun borderPanel(build: BorderPanelBuilder.() -> Unit): JPanel =
+  factory.borderPanel(build)
 
-fun flowPanel(build: DefaultPanelBuilder<FlowLayout>.() -> Unit) : JPanel =
-    factory.flowPanel(build)
+fun flowPanel(build: DefaultPanelBuilder<FlowLayout>.() -> Unit): JPanel =
+  factory.flowPanel(build)
 
-fun verticalPanel(build: DefaultPanelBuilder<BoxLayout>.() -> Unit) : JPanel =
-    factory.verticalPanel(build)
+fun verticalPanel(build: DefaultPanelBuilder<BoxLayout>.() -> Unit): JPanel =
+  factory.verticalPanel(build)
 
 fun grid(rows: Int, cols: Int, build: DefaultPanelBuilder<GridLayout>.() -> Unit): JPanel =
-    factory.grid(rows, cols, build)
+  factory.grid(rows, cols, build)
 
-fun button(label: String, build: (JButton.() -> Unit)? = null) : JButton =
-    factory.button(label, build)
+fun button(label: String, build: (JButton.() -> Unit)? = null): JButton =
+  factory.button(label, build)
 
-fun label(label: String = "", build: (JLabel.() -> Unit)? = null) : JLabel =
-    factory.label(label, build)
+fun label(label: String = "", build: (JLabel.() -> Unit)? = null): JLabel =
+  factory.label(label, build)
 
-fun textField(columns: Int, build: (JTextField.() -> Unit)? = null) : JTextField =
-    factory.textField(columns, build)
+fun textField(columns: Int, build: (JTextField.() -> Unit)? = null): JTextField =
+  factory.textField(columns, build)
 
 fun textArea(
-    text: String? = null, rows: Int = 0, columns: Int = 0, build: (JTextArea.() -> Unit)? = null
+  text: String? = null, rows: Int = 0, columns: Int = 0, build: (JTextArea.() -> Unit)? = null
 ): JTextArea =
-    factory.textArea(text, rows, columns, build)
+  factory.textArea(text, rows, columns, build)
 
 fun <T : JComponent> border(title: String, build: () -> T): T =
-    factory.border(title, build)
+  factory.border(title, build)
+
+fun emptyBorder(width: Int): Border = emptyBorder(width, width, width, width)
+
+fun emptyBorder(top: Int, left: Int, bottom: Int, right: Int): Border =
+  BorderFactory.createEmptyBorder(top, left, bottom, right)
 
 interface PanelBuilder {
   val panel: JPanel
@@ -93,7 +121,7 @@ interface JComponentFactory {
   fun textField(columns: Int, build: (JTextField.() -> Unit)? = null): JTextField
 
   fun textArea(
-      text: String? = null, rows: Int = 0, columns: Int = 0, build: (JTextArea.() -> Unit)? = null
+    text: String? = null, rows: Int = 0, columns: Int = 0, build: (JTextArea.() -> Unit)? = null
   ): JTextArea
 
   fun radioButton(label: String, build: (JRadioButton.() -> Unit)? = null): JRadioButton
@@ -102,42 +130,42 @@ interface JComponentFactory {
 
 }
 
-class DefaultPanelBuilder<L: LayoutManager>(override val panel: JPanel) :
-    PanelBuilder, JComponentFactory {
+class DefaultPanelBuilder<L : LayoutManager>(override val panel: JPanel) :
+  PanelBuilder, JComponentFactory {
 
   override fun borderPanel(build: BorderPanelBuilder.() -> Unit): JPanel =
-      add(factory.borderPanel(build))
+    add(factory.borderPanel(build))
 
   override fun flowPanel(build: DefaultPanelBuilder<FlowLayout>.() -> Unit): JPanel =
-      add(factory.flowPanel(build))
+    add(factory.flowPanel(build))
 
   override fun verticalPanel(build: DefaultPanelBuilder<BoxLayout>.() -> Unit): JPanel =
-      add(factory.verticalPanel(build))
+    add(factory.verticalPanel(build))
 
   override fun grid(
-      rows: Int, cols: Int, build: DefaultPanelBuilder<GridLayout>.() -> Unit
+    rows: Int, cols: Int, build: DefaultPanelBuilder<GridLayout>.() -> Unit
   ): JPanel =
-      add(factory.grid(rows, cols, build))
+    add(factory.grid(rows, cols, build))
 
   override fun button(label: String, build: (JButton.() -> Unit)?): JButton =
-      add(factory.button(label, build))
+    add(factory.button(label, build))
 
   override fun label(label: String, build: (JLabel.() -> Unit)?): JLabel =
-      add(factory.label(label, build))
+    add(factory.label(label, build))
 
   override fun textField(columns: Int, build: (JTextField.() -> Unit)?): JTextField =
-      add(factory.textField(columns, build))
+    add(factory.textField(columns, build))
 
   override fun textArea(
-      text: String?, rows: Int, columns: Int, build: (JTextArea.() -> Unit)?
+    text: String?, rows: Int, columns: Int, build: (JTextArea.() -> Unit)?
   ): JTextArea =
-      add(factory.textArea(text, rows, columns, build))
+    add(factory.textArea(text, rows, columns, build))
 
   override fun radioButton(label: String, build: (JRadioButton.() -> Unit)?): JRadioButton =
-      add(factory.radioButton(label, build))
+    add(factory.radioButton(label, build))
 
   override fun <T : JComponent> border(title: String, build: () -> T): T =
-      add(factory.border(title, build))
+    add(factory.border(title, build))
 
   fun <T : Component> add(component: T): T {
     panel.add(component)
@@ -151,19 +179,19 @@ class DefaultPanelBuilder<L: LayoutManager>(override val panel: JPanel) :
 
 class DefaultJComponentFactory : JComponentFactory {
 
-  override fun borderPanel(build: BorderPanelBuilder.() -> Unit) : JPanel {
+  override fun borderPanel(build: BorderPanelBuilder.() -> Unit): JPanel {
     val panel = JPanel(BorderLayout())
     build(BorderPanelBuilder(panel))
     return panel
   }
 
-  override fun flowPanel(build: DefaultPanelBuilder<FlowLayout>.() -> Unit) : JPanel {
+  override fun flowPanel(build: DefaultPanelBuilder<FlowLayout>.() -> Unit): JPanel {
     val panel = JPanel()
     build(DefaultPanelBuilder(panel))
     return panel
   }
 
-  override fun verticalPanel(build: DefaultPanelBuilder<BoxLayout>.() -> Unit) : JPanel {
+  override fun verticalPanel(build: DefaultPanelBuilder<BoxLayout>.() -> Unit): JPanel {
     val panel = JPanel()
     val layout = BoxLayout(panel, BoxLayout.Y_AXIS)
     panel.layout = layout
@@ -172,29 +200,29 @@ class DefaultJComponentFactory : JComponentFactory {
   }
 
   override fun grid(
-      rows: Int, cols: Int, build: DefaultPanelBuilder<GridLayout>.() -> Unit
+    rows: Int, cols: Int, build: DefaultPanelBuilder<GridLayout>.() -> Unit
   ): JPanel {
     val panel = JPanel(GridLayout(rows, cols))
     build(DefaultPanelBuilder(panel))
     return panel
   }
 
-  override fun button(label: String, build: (JButton.() -> Unit)?) : JButton =
-      make(JButton(label), build)
+  override fun button(label: String, build: (JButton.() -> Unit)?): JButton =
+    make(JButton(label), build)
 
-  override fun label(label: String, build: (JLabel.() -> Unit)?) : JLabel =
-      make(JLabel(label), build)
+  override fun label(label: String, build: (JLabel.() -> Unit)?): JLabel =
+    make(JLabel(label), build)
 
-  override fun textField(columns: Int, build: (JTextField.() -> Unit)?) : JTextField =
-      make(JTextField(columns), build)
+  override fun textField(columns: Int, build: (JTextField.() -> Unit)?): JTextField =
+    make(JTextField(columns), build)
 
   override fun textArea(
-      text: String?, rows: Int, columns: Int, build: (JTextArea.() -> Unit)?
+    text: String?, rows: Int, columns: Int, build: (JTextArea.() -> Unit)?
   ): JTextArea =
-      make(JTextArea(text, rows, columns), build)
+    make(JTextArea(text, rows, columns), build)
 
   override fun radioButton(label: String, build: (JRadioButton.() -> Unit)?): JRadioButton =
-      make(JRadioButton(label), build)
+    make(JRadioButton(label), build)
 
   override fun <T : JComponent> border(title: String, build: () -> T): T {
     val component = build()
@@ -212,14 +240,14 @@ class DefaultJComponentFactory : JComponentFactory {
 // TODO all these properties should be probably cached
 
 val JButton.actionEvents: Observable<ActionEvent>
-  get() = Observable.create { emitter ->
+  get() = observable { emitter ->
     val listener = ActionListener { e -> emitter.onNext(e) }
     addActionListener(listener)
     emitter.setCancellable { removeActionListener(listener) }
   }
 
 val JButton.mouseEvents: Observable<MouseEvent>
-  get() = Observable.create { emitter ->
+  get() = observable { emitter ->
     val listener = object : MouseListener {
       override fun mouseClicked(e: MouseEvent) {
         fireChange(e)
@@ -250,26 +278,37 @@ val JButton.mouseEvents: Observable<MouseEvent>
   }
 
 val JTextField.actionEvents: Observable<ActionEvent>
-  get() = Observable.create { emitter ->
+  get() = observable { emitter ->
     val listener = ActionListener { e -> emitter.onNext(e) }
     addActionListener(listener)
     emitter.setCancellable { removeActionListener(listener) }
   }
 
 val JRadioButton.actionEvents: Observable<ActionEvent>
-  get() = Observable.create { emitter ->
+  get() = observable { emitter ->
     val listener = ActionListener { e -> emitter.onNext(e) }
     addActionListener(listener)
     emitter.setCancellable { removeActionListener(listener) }
   }
 
 val JTextComponent.documentChanges: Observable<DocumentEvent>
-  get() = Observable.create { emitter ->
+  get() = observable { emitter ->
     val listener = object : DocumentListener {
-      override fun insertUpdate(e: DocumentEvent) { fireChange(e) }
-      override fun removeUpdate(e: DocumentEvent) { fireChange(e) }
-      override fun changedUpdate(e: DocumentEvent) { fireChange(e) }
-      private fun fireChange(e: DocumentEvent) { emitter.onNext(e) }
+      override fun insertUpdate(e: DocumentEvent) {
+        fireChange(e)
+      }
+
+      override fun removeUpdate(e: DocumentEvent) {
+        fireChange(e)
+      }
+
+      override fun changedUpdate(e: DocumentEvent) {
+        fireChange(e)
+      }
+
+      private fun fireChange(e: DocumentEvent) {
+        emitter.onNext(e)
+      }
     }
     document.addDocumentListener(listener)
     emitter.setCancellable { document.removeDocumentListener(listener) }
@@ -279,55 +318,44 @@ val JTextComponent.textChanges: Observable<String>
   get() = documentChanges.map { text }
 
 
+val swingScheduler = object : Scheduler {
 
-val swingScheduler = SwingScheduler()
+  private val executor = object : Scheduler.Executor {
 
-class SwingScheduler : Scheduler() {
+    private val waiter = computationScheduler.newExecutor()
 
-  private val worker: Worker = SwingWorker()
-  private val disposed: Disposable = Disposable.empty()
+    override fun submit(delayMillis: Long, task: () -> Unit) {
+      waiter.submit(delayMillis) {
+        SwingUtilities.invokeLater(task)
+      }
+    }
 
-  init { disposed.dispose() }
+    override fun submitRepeating(
+      startDelayMillis: Long,
+      periodMillis: Long,
+      task: () -> Unit
+    ) {
+      waiter.submitRepeating(startDelayMillis, periodMillis) {
+        SwingUtilities.invokeLater(task)
+      }
+    }
 
-  override fun scheduleDirect(run: Runnable): Disposable {
-    SwingUtilities.invokeLater(run)
-    return disposed
-  }
+    override val isDisposed: Boolean = waiter.isDisposed
 
-  override fun scheduleDirect(run: Runnable, delay: Long, unit: TimeUnit): Disposable {
-    throw UnsupportedOperationException("This scheduler doesn't support delayed execution")
-  }
+    override fun cancel() {
+      waiter.cancel()
+    }
 
-  override fun schedulePeriodicallyDirect(run: Runnable, initialDelay: Long, period: Long, unit: TimeUnit): Disposable {
-    throw UnsupportedOperationException("This scheduler doesn't support periodic execution")
-  }
-
-  override fun createWorker(): Worker {
-    return worker
-  }
-
-  inner class SwingWorker : Worker() {
     override fun dispose() {
-      // This worker is always stateless and won't track tasks
+      waiter.dispose()
     }
 
-    override fun isDisposed(): Boolean {
-      return false // dispose() has no effect
-    }
+  }
 
-    override fun schedule(run: Runnable): Disposable {
-      SwingUtilities.invokeLater(run)
-      return disposed
-    }
+  override fun newExecutor(): Scheduler.Executor = executor
 
-    override fun schedule(run: Runnable, delay: Long, unit: TimeUnit): Disposable {
-      throw UnsupportedOperationException("This scheduler doesn't support delayed execution")
-    }
-
-    override fun schedulePeriodically(run: Runnable, initialDelay: Long, period: Long, unit: TimeUnit): Disposable {
-      throw UnsupportedOperationException("This scheduler doesn't support periodic execution")
-    }
-
+  override fun destroy() {
+    /* does nothing for swing */
   }
 
 }
