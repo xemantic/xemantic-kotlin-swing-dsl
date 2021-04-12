@@ -182,7 +182,6 @@ fun main() = mainFrame("swingScheduler example") {
     observableInterval(1000, swingScheduler)
       .subscribe { tick ->
         text = tick.toString()
-        println("Thread: ${Thread.currentThread()}")
       }
     preferredSize = Dimension(100, 100)
     horizontalAlignment = SwingConstants.CENTER
