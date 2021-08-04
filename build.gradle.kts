@@ -19,7 +19,7 @@
  */
 
 plugins {
-  kotlin("jvm") version "1.4.32"
+  kotlin("jvm") version "1.5.21"
   signing
   `maven-publish`
 }
@@ -28,12 +28,11 @@ group = "com.xemantic.kotlin"
 version = "1.0-SNAPSHOT"
 
 val javaCompatibilityVersion = "1.8"
-val kotlinCompatibilityVersion = "1.4"
+val kotlinCompatibilityVersion = "1.5"
 val reaktiveVersion = "1.1.21"
 
 repositories {
   mavenCentral()
-  jcenter()
 }
 
 dependencies {
