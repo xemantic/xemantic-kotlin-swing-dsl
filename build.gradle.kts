@@ -29,7 +29,7 @@ version = "1.0-SNAPSHOT"
 
 val javaCompatibilityVersion = "1.8"
 val kotlinCompatibilityVersion = "1.5"
-val reaktiveVersion = "1.1.21"
+val reaktiveVersion = "1.2.1"
 
 repositories {
   mavenCentral()
@@ -56,6 +56,7 @@ publishing {
 
   publications {
     create<MavenPublication>("mavenJava") {
+      from(components["kotlin"])
       pom {
         name.set("xemantic-kotlin-swing-dsl")
         description.set("Kotlin goodies for Java Swing")
