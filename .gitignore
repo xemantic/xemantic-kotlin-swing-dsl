@@ -1,5 +1,5 @@
 # gradle files
-/build/
+build/
 /.gradle
 
 # idea files
@@ -8,4 +8,4 @@
 !/.idea/dictionaries/
 !/.idea/codeStyles/
 /*.iml
-/out
+out
