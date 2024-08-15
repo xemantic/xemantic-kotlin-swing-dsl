@@ -19,8 +19,8 @@
  */
 
 plugins {
-  `maven-publish` apply false
-  signing apply false
+  `maven-publish`
+  signing
   alias(libs.plugins.versions)
 }
 
