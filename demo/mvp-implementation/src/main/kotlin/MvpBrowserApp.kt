@@ -21,8 +21,10 @@ package com.xemantic.kotlin.swing.demo.mvp
 
 import com.xemantic.kotlin.swing.*
 import kotlinx.coroutines.launch
+import java.awt.Dimension
 
-fun main(vararg args: String) = MainWindow("My Browser") {
+fun main(vararg args: String) = MainWindow("My Browser") { window ->
+  window.preferredSize = Dimension(300, 300)
   val internet = DefaultInternet()
   val view = SwingBrowserView()
   val presenter = BrowserPresenter(view, scope, internet)

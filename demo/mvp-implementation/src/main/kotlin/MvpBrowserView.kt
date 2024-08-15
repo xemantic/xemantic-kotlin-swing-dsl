@@ -21,7 +21,6 @@
 package com.xemantic.kotlin.swing.demo.mvp
 
 import com.xemantic.kotlin.swing.*
-import java.awt.Dimension
 
 /**
  * Swing implementation of the [BrowserView], could be also JavaFX, or HTML + JS or native iOS.
@@ -31,9 +30,7 @@ class SwingBrowserView : BrowserView {
   private val goAction = Button("Go!") {
     isEnabled = false
   }
-  private val contentBox = TextArea {
-    preferredSize = Dimension(300, 300)
-  }
+  private val contentBox = TextArea()
 
   override val urlEdits = urlField.textChanges
   override val goActions = goAction.actionEvents.asActions
@@ -66,7 +63,7 @@ class SwingBrowserView : BrowserView {
         }
       }
       center {
-        contentBox
+        ScrollPane { contentBox }
       }
     }
   }

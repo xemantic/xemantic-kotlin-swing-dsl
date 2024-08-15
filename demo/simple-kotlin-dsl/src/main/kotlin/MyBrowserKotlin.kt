@@ -25,12 +25,10 @@ import kotlinx.coroutines.flow.*
 import java.awt.Dimension
 import java.net.URI
 
-fun main() = MainWindow("My Browser") {
+fun main() = MainWindow("My Browser") { window ->
   val urlBox = TextField()
   val goButton = Button("Go!") { isEnabled = false }
-  val contentBox = TextArea {
-    preferredSize = Dimension(300, 300)
-  }
+  val contentBox = TextArea()
 
   urlBox.textChanges.listen { url ->
     goButton.isEnabled = url.isNotBlank()
@@ -56,6 +54,8 @@ fun main() = MainWindow("My Browser") {
       contentBox.text = it
       goButton.isEnabled = true
     }
+
+  window.preferredSize = Dimension(300, 300)
 
   Border.empty(4) {
     BorderPanel {
