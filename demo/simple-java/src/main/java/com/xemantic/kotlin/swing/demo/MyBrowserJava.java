@@ -1,7 +1,7 @@
 /*
  * This file is part of xemantic-kotlin-swing-dsl - Kotlin goodies for Java Swing.
  *
- * Copyright (C) 2021  Kazimierz Pogoda
+ * Copyright (C) 2024  Kazimierz Pogoda
  *
  * xemantic-kotlin-swing-dsl is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License as
@@ -17,55 +17,88 @@
  * along with xemantic-kotlin-swing-dsl. If not,
  * see <https://www.gnu.org/licenses/>.
  */
-
-package com.xemantic.kotlin.swing;
+package com.xemantic.kotlin.swing.demo;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ActionListener;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
+import java.net.URL;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-public class SwingJavaWay {
+public class MyBrowserJava {
 
-  public static void main(String[] args) throws InvocationTargetException, InterruptedException {
-    SwingUtilities.invokeAndWait(SwingJavaWay::createFrame);
+  public static void main(
+      String[] args
+  ) throws InvocationTargetException, InterruptedException {
+    SwingUtilities.invokeAndWait(MyBrowserJava::mainWindow);
   }
 
-  private static void createFrame() {
+  private static void mainWindow() {
 
     JFrame frame = new JFrame("My Browser");
 
-    final JLabel contentBox = new JLabel();
-    contentBox.setHorizontalAlignment(SwingConstants.CENTER);
-    contentBox.setVerticalAlignment(SwingConstants.CENTER);
-    contentBox.setPreferredSize(new Dimension(300, 300));
+    final JTextArea content = new JTextArea();
+    content.setPreferredSize(
+        new Dimension(300, 300)
+    );
 
-    JPanel contentPanel = new JPanel(new BorderLayout());
+    JPanel contentPanel = new JPanel(
+        new BorderLayout()
+    );
 
-    JPanel northContent = new JPanel(new BorderLayout(4, 0));
-    northContent.add(new JLabel(("URL")), BorderLayout.WEST);
-    northContent.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+    JPanel northContent = new JPanel(
+        new BorderLayout(4, 0)
+    );
+    northContent.add(
+        new JLabel("URL"),
+        BorderLayout.WEST
+    );
+    northContent.setBorder(
+        BorderFactory.createEmptyBorder(4, 4, 4, 4)
+    );
 
     JTextField urlBox = new JTextField(10);
     JButton goAction = new JButton("Go!");
     goAction.setEnabled(false);
 
-    goAction.addActionListener(
-        e -> {
-          contentBox.setText("Loading: " + urlBox.getText());
-          goAction.setEnabled(false);
-          Timer timer =
-              new Timer(
-                  1000,
-                  t -> {
-                    contentBox.setText("Ready: " + urlBox.getText());
-                    goAction.setEnabled(true);
-                  });
-          timer.setRepeats(false);
-          timer.start();
-        });
+    ActionListener action = e -> {
+      goAction.setEnabled(false);
+
+      new SwingWorker<String, String>() {
+        @Override
+        protected String doInBackground() {
+          try {
+            URL url = new URI(urlBox.getText()).toURL();
+            try (InputStream in = url.openStream()) {
+              byte[] data = in.readAllBytes();
+              return new String(data);
+            }
+          } catch (Exception e) {
+            return e.toString();
+          }
+        }
+
+        @Override
+        protected void done() {
+          goAction.setEnabled(true);
+          try {
+            String text = get();
+            content.setText(text);
+          } catch (Exception e) {
+            e.printStackTrace();
+            // should never happen
+          }
+        }
+      }.execute();
+    };
+
+    goAction.addActionListener(action);
+    urlBox.addActionListener(action);
     northContent.add(goAction, BorderLayout.EAST);
 
     urlBox
@@ -89,16 +122,15 @@ public class SwingJavaWay {
 
               private void fireChange(DocumentEvent e) {
                 String text = urlBox.getText();
-                contentBox.setText("Will load: " + text);
-                goAction.setEnabled(!text.trim().isEmpty());
+                goAction.setEnabled(!text.isBlank());
               }
             });
 
     northContent.add(urlBox, BorderLayout.CENTER);
     contentPanel.add(northContent, BorderLayout.NORTH);
-    contentPanel.add(contentBox, BorderLayout.CENTER);
+    contentPanel.add(content, BorderLayout.CENTER);
 
-    frame.setContentPane(contentPanel);
+    frame.setContentPane(new JScrollPane(contentPanel));
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     frame.pack();
     frame.setVisible(true);
