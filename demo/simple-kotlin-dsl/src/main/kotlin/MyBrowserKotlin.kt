@@ -69,8 +69,7 @@ fun main() = MainWindow("My Browser") { window ->
             hgap = 4
             vgap = 4
           }
-          west {
-            Label("URL") }
+          west { Label("URL") }
           center { urlBox }
           east { goButton }
         }

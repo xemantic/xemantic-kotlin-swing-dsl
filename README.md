@@ -80,8 +80,7 @@ fun main() = MainWindow("My Browser") {
             hgap = 4
             vgap = 4
           }
-          west {
-            Label("URL") }
+          west { Label("URL") }
           center { urlBox }
           east { goButton }
         }
@@ -103,8 +102,9 @@ When run it will produce:
   Swing components from AWT components and is mostly irrelevant for modern purposes).
 * Master JFrame is created with the `WainWindow` builder, which also takes care of setting
   up the `SwingScope` holding a coroutine scope bound to Swing's event dispatcher thread.
-* Instead of callbacks, events are delivered through `Flow`s, the `listen()` function will
-  collect the flow in the newly launched coroutine, which is cancelled when the window is closed.
+* Instead of event listeners (callbacks), events are delivered through `Flow`s. The `listen()`
+  function collects the flow in the newly launched coroutine, which is cancelled when the window
+  is closed.
 * Other coroutine dispatchers, like `IO`, can be used in the event processing pipeline
   by adding the `flowOn`. This makes the cumbersome `SwingWorker` obsolete.
 * Each UI component can be immediately configured with direct access to its properties.
