@@ -1,7 +1,7 @@
 /*
  * This file is part of xemantic-kotlin-swing-dsl - Kotlin goodies for Java Swing.
  *
- * Copyright (C) 2021  Kazimierz Pogoda
+ * Copyright (C) 2024  Kazimierz Pogoda
  *
  * xemantic-kotlin-swing-dsl is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License as
@@ -18,43 +18,29 @@
  * see <https://www.gnu.org/licenses/>.
  */
 
-package com.xemantic.kotlin.swing
+package com.xemantic.kotlin.swing.demo
 
-import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.observable.Observable
-import com.badoo.reaktive.observable.subscribe
+import com.xemantic.kotlin.swing.Label
+import com.xemantic.kotlin.swing.MainWindow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
+import java.awt.Dimension
+import javax.swing.SwingConstants
+import kotlin.time.Duration.Companion.seconds
 
-/**
- * A presenter base.
- */
-abstract class Presenter<V>(
-  builder: Presenter<V>.Builder.() -> Unit
-) {
-
-  private val starters = mutableListOf<V.() -> Observable<*>>()
-
-  inner class Builder {
-    fun observe(block: V.() -> Observable<*>) {
-      starters.add(block)
+fun main() = MainWindow("Time Ticks") {
+  Label {
+    preferredSize = Dimension(100, 100)
+    horizontalAlignment = SwingConstants.CENTER
+    flow {
+      var count = 0
+      while (true) {
+        emit(count++)
+        delay(1.seconds) // delay is suspending the coroutine
+        // so we are not blocking Swing event dispatcher thread
+      }
+    }.listen {
+      text = "$it"
     }
   }
-
-  init {
-    builder(Builder())
-  }
-
-  private val observables = mutableListOf<Observable<*>>()
-
-  private lateinit var subscriptions: List<Disposable>
-
-  fun start(view: V) {
-    subscriptions = starters
-      .map { it(view) }
-      .map { it.subscribe() }
-  }
-
-  fun stop() {
-    subscriptions.forEach { it.dispose() }
-  }
-
 }

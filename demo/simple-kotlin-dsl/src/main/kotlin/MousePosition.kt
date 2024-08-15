@@ -1,7 +1,7 @@
 /*
  * This file is part of xemantic-kotlin-swing-dsl - Kotlin goodies for Java Swing.
  *
- * Copyright (C) 2021  Kazimierz Pogoda
+ * Copyright (C) 2024  Kazimierz Pogoda
  *
  * xemantic-kotlin-swing-dsl is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License as
@@ -18,20 +18,16 @@
  * see <https://www.gnu.org/licenses/>.
  */
 
-package com.xemantic.kotlin.swing
+package com.xemantic.kotlin.swing.demo
 
-import com.badoo.reaktive.observable.observableInterval
-import com.badoo.reaktive.observable.subscribe
+import com.xemantic.kotlin.swing.*
 import java.awt.Dimension
-import javax.swing.SwingConstants
 
-fun main() = mainFrame("swingScheduler example") {
-  contentPane = label{
-    observableInterval(1000, swingScheduler)
-      .subscribe { tick ->
-        text = tick.toString()
-      }
-    preferredSize = Dimension(100, 100)
-    horizontalAlignment = SwingConstants.CENTER
+fun main() = MainWindow("Mouse Position") {
+  Label {
+    preferredSize = Dimension(400, 400)
+    mouseMoves.listen {
+      text = "x: ${it.x}, y: ${it.y}"
+    }
   }
 }

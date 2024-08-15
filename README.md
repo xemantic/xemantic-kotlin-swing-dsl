@@ -2,196 +2,132 @@
 
 _Express your Swing code easily in Kotlin_
 
-This project was born when I had an urgent need to quickly provide a simple UI for remote JVM
-application. I needed a [remote control for my Robot](https://xemantic.com/#we-are-the-robots),
-talking over [OSC](https://en.wikipedia.org/wiki/Open_Sound_Control) protocol, already coded in
-Kotlin and based on
-[functional reactive programming](https://en.wikipedia.org/wiki/Functional_reactive_programming)
-principles (See [we-are-the-robots](https://github.com/xemantic/we-are-the-robots) on GitHub). I
-decided to go for Swing, to stay in the same ecosystem, but I remember the experience of coding GUI
-in Swing years ago, and I remember what I liked about it and what was painful. Fortunately now I
-also have the experience of building Domain Specific Languages in Kotlin and I quickly realized that
-I can finally swing the way I always wanted to.
+## Why?
 
+Kotlin provides incredible language sugar over pure Java. Using Kotlin
+instead of Java for writing Swing UI already makes the code more concise, but
+**what if the Swing was written from scratch, to provide Kotlin-idiomatic way of doing things?**
+This is the intent behind the `xemantic-kotlin-swing-dsl` library - to deliver a
+[Domain Specific Language](https://en.wikipedia.org/wiki/Domain-specific_language)
+for building Swing based UI and react to UI events by utilizing
+[Kotlin coroutines](https://kotlinlang.org/docs/coroutines-overview.html). 
+
+## Usage
+
+Add to your `build.gradle.kts`
+
+```kotlin
+dependencies {
+  implementation("com.xemantic.kotlin:xemantic-kotlin-swing-dsl-core:$libVersion")
+  runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-swing:$coroutinesVersion")
+}
+```
 
 ## Example
 
-```kotlin
-import com.badoo.reaktive.observable.*
-import com.badoo.reaktive.scheduler.ioScheduler
-import java.awt.Dimension
-import javax.swing.SwingConstants
+Here is a simple internet browser. For the sake of example, instead of rendering
+the full HTML, it will just download a content from provided URL address
+and display it as a text.
 
-fun main() = mainFrame("My Browser") {
-  val contentBox = label("") {
-    horizontalAlignment = SwingConstants.CENTER
-    verticalAlignment = SwingConstants.CENTER
+```kotlin
+import com.xemantic.kotlin.swing.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import java.awt.Dimension
+import java.net.URI
+
+fun main() = MainWindow("My Browser") {
+  val urlBox = TextField()
+  val goButton = Button("Go!") { isEnabled = false }
+  val contentBox = TextArea {
     preferredSize = Dimension(300, 300)
   }
-  val urlBox = textField(10)
-  val goAction = button("Go!") {
-    isEnabled = false
-    actionEvents
-      .withLatestFrom(urlBox.textChanges) { _, url: String -> url }
-      .doOnAfterNext { url ->
-        isEnabled = false
-        contentBox.text = "Loading: $url"
-      }
-      .delay(1000, ioScheduler) // e.g. REST request
-      .observeOn(swingScheduler)
-      .subscribe { url ->
-        isEnabled = true
-        contentBox.text = "Ready: $url"
-      }
+
+  urlBox.textChanges.listen { url ->
+    goButton.isEnabled = url.isNotBlank()
   }
-  urlBox.textChanges.subscribe { url ->
-    goAction.isEnabled = url.isNotBlank()
-    contentBox.text = "Will load: $url"
-  }
-  contentPane = borderPanel {
-    layout.hgap = 4
-    panel.border = emptyBorder(4)
-    north = borderPanel {
-      west = label("URL")
-      center = urlBox
-      east = goAction
+
+  merge(
+    goButton.actionEvents,
+    urlBox.actionEvents
+  )
+    .filter { goButton.isEnabled }
+    .onEach { goButton.isEnabled = false }
+    .map { urlBox.text }
+    .flowOn(Dispatchers.Main)
+    .map {
+      try {
+        URI(it).toURL().readText()
+      } catch (e : Exception) {
+        e.message
+      }
     }
-    center = contentBox
+    .flowOn(Dispatchers.IO)
+    .listen {
+      contentBox.text = it
+      goButton.isEnabled = true
+    }
+
+  Border.empty(4) {
+    BorderPanel {
+      layout {
+        hgap = 4
+        vgap = 4
+      }
+      north {
+        BorderPanel {
+          layout {
+            hgap = 4
+            vgap = 4
+          }
+          west {
+            Label("URL") }
+          center { urlBox }
+          east { goButton }
+        }
+      }
+      center { ScrollPane { contentBox } }
+    }
   }
+
 }
 ```
 
-will produce:
+When run it will produce:
 
 ![example app image](docs/xemantic-kotlin-swing-dsl-example.png)
 
-Benefits:
+### Notable conventions
 
-* compact code, minimal verbosity
-* declarative instead of imperative
-* functional reactive programming way of handling events
-  ([Reaktive](https://github.com/badoo/Reaktive))
-* component encapsulation - communication through well defined event streams
-* `swingScheduler` for receiving asynchronously produced events (see below)
+* No `J` prefix in UI component names (historically `J` was added to differentiate
+  Swing components from AWT components and is mostly irrelevant for modern purposes).
+* Master JFrame is created with the `WainWindow` builder, which also takes care of setting
+  up the `SwingScope` holding a coroutine scope bound to Swing's event dispatcher thread.
+* Instead of callbacks, events are delivered through `Flow`s, the `listen()` function will
+  collect the flow in the newly launched coroutine, which is cancelled when the window is closed.
+* Other coroutine dispatchers, like `IO`, can be used in the event processing pipeline
+  by adding the `flowOn`. This makes the cumbersome `SwingWorker` obsolete.
+* Each UI component can be immediately configured with direct access to its properties.
+* Panels are specified with special builders, allowing intuitive development of the
+  component tree.
+
+### Key benefits
+
+* compact UI code with minimal verbosity
+* declarative instead of imperative UI building
+* reactive event handling using `Flow`s, 
 
 And here is an equivalent code in Java for the sake of comparison:
 
-```java
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.lang.reflect.InvocationTargetException;
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+The code above is taken from the
+[MyBrowserKotlin](demo/simple-kotlin-dsl/src/main/kotlin/MyBrowserKotlin.kt) demo.
 
-public class SwingJavaWay {
+### How would it look in pure Java Swing?
 
-  public static void main(String[] args) throws InvocationTargetException, InterruptedException {
-    SwingUtilities.invokeAndWait(SwingJavaWay::createFrame);
-  }
+For the sake of comparison the
+[MyBrowserKotlin](demo/simple-java/src/main/java/com/xemantic/kotlin/swing/demo/MyBrowserJava.java)
+demo implements exactly the same "browser" in pure Java.
 
-  private static void createFrame() {
+## Other examples
 
-    JFrame frame = new JFrame("My Browser");
-
-    final JLabel contentBox = new JLabel();
-    contentBox.setHorizontalAlignment(SwingConstants.CENTER);
-    contentBox.setVerticalAlignment(SwingConstants.CENTER);
-    contentBox.setPreferredSize(new Dimension(300, 300));
-
-    JPanel contentPanel = new JPanel(new BorderLayout());
-
-    JPanel northContent = new JPanel(new BorderLayout(4, 0));
-    northContent.add(new JLabel(("URL")), BorderLayout.WEST);
-    northContent.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
-
-    JTextField urlBox = new JTextField(10);
-    JButton goAction = new JButton("Go!");
-    goAction.setEnabled(false);
-
-    goAction.addActionListener(
-        e -> {
-          contentBox.setText("Loading: " + urlBox.getText());
-          goAction.setEnabled(false);
-          Timer timer =
-              new Timer(
-                  1000,
-                  t -> {
-                    contentBox.setText("Ready: " + urlBox.getText());
-                    goAction.setEnabled(true);
-                  });
-          timer.setRepeats(false);
-          timer.start();
-        });
-    northContent.add(goAction, BorderLayout.EAST);
-
-    urlBox
-        .getDocument()
-        .addDocumentListener(
-            new DocumentListener() {
-              @Override
-              public void insertUpdate(DocumentEvent e) {
-                fireChange(e);
-              }
-
-              @Override
-              public void removeUpdate(DocumentEvent e) {
-                fireChange(e);
-              }
-
-              @Override
-              public void changedUpdate(DocumentEvent e) {
-                fireChange(e);
-              }
-
-              private void fireChange(DocumentEvent e) {
-                String text = urlBox.getText();
-                contentBox.setText("Will load: " + text);
-                goAction.setEnabled(!text.trim().isEmpty());
-              }
-            });
-
-    northContent.add(urlBox, BorderLayout.CENTER);
-    contentPanel.add(northContent, BorderLayout.NORTH);
-    contentPanel.add(contentBox, BorderLayout.CENTER);
-
-    frame.setContentPane(contentPanel);
-    frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    frame.pack();
-    frame.setVisible(true);
-  }
-}
-```
-
-:information_source: There is also another more elaborate Kotlin example:
-[SwingKotlinWayWithReactiveModelViewPresenter](src/test/kotlin/SwingKotlinWayWithReactiveModelViewPresenter.kt) 
-, showing how to use [Model-View-Presenter](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter)
-pattern with this library, where events from the view are represented as reactive `Observable`s.
-
-
-## Swing scheduler
-
-By default everything in Swing is supposed to run on the same thread. Any update to any GUI
-component should happen there, otherwise concurrency might cause consistency issues. But in many
-cases long running computation, or asynchronous IO, will require us to receive results in one thread
-and display them in the main Swing thread. This is what `swingScheduler` is for:
-
-```kotlin
-fun main() = mainFrame("swingScheduler example") {
-  contentPane = label{
-    observableInterval(1000, swingScheduler)
-      .subscribe { tick ->
-        text = tick.toString()
-      }
-    preferredSize = Dimension(100, 100)
-    horizontalAlignment = SwingConstants.CENTER
-  }
-}
-```
-
-The `observableInterval` creates a constant stream of ticks produced by another thread.
-Once they happen, the subscription code will be handled by the Swing thread.
-Most of the time it is not needed to specify `swingScheduler` for simple event handling,
-because the default scheduler for receiving events will be usually the same as the one
-used for publishing them, and this one is already the
-Swing event thread.
+The [demo](demo) folder contains additional examples.

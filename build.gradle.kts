@@ -1,7 +1,7 @@
 /*
  * This file is part of xemantic-kotlin-swing-dsl - Kotlin goodies for Java Swing.
  *
- * Copyright (C) 2021  Kazimierz Pogoda
+ * Copyright (C) 2024  Kazimierz Pogoda
  *
  * xemantic-kotlin-swing-dsl is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License as
@@ -19,44 +19,23 @@
  */
 
 plugins {
-  kotlin("jvm") version "1.5.21"
-  signing
   `maven-publish`
+  signing
+  alias(libs.plugins.versions)
 }
 
-group = "com.xemantic.kotlin"
-version = "1.0-SNAPSHOT"
-
-val javaCompatibilityVersion = "1.8"
-val kotlinCompatibilityVersion = "1.5"
-val reaktiveVersion = "1.2.1"
-
-repositories {
-  mavenCentral()
-}
-
-dependencies {
-  implementation("com.badoo.reaktive:reaktive:$reaktiveVersion")
-}
-
-tasks {
-
-  compileKotlin {
-    kotlinOptions {
-      jvmTarget = javaCompatibilityVersion
-      apiVersion = kotlinCompatibilityVersion
-      languageVersion = kotlinCompatibilityVersion
-    }
-    sourceCompatibility = javaCompatibilityVersion
+allprojects {
+  repositories {
+    mavenCentral()
   }
-
 }
 
 publishing {
 
   publications {
     create<MavenPublication>("mavenJava") {
-      from(components["kotlin"])
+      groupId = "com.xemantic.kotlin"
+      //from(components["kotlin"])
       pom {
         name.set("xemantic-kotlin-swing-dsl")
         description.set("Kotlin goodies for Java Swing")
@@ -81,35 +60,33 @@ publishing {
       }
     }
   }
+}
 
-  repositories {
-//    maven {
-//      name = "OSSRH"
-//      setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-//      credentials {
-//        username = System.getenv("MAVEN_USERNAME")
-//        password = System.getenv("MAVEN_PASSWORD")
-//      }
-//    }
-    maven {
-      name = "GitHubPackages"
-      setUrl("https://maven.pkg.github.com/xemantic/xemantic-kotlin-swing-dsl")
-      credentials {
-        username = System.getenv("GITHUB_ACTOR")
-        password = System.getenv("GITHUB_TOKEN")
-      }
+repositories {
+  maven {
+    name = "OSSRH"
+    setUrl("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+    credentials {
+      username = System.getenv("MAVEN_USERNAME")
+      password = System.getenv("MAVEN_PASSWORD")
     }
   }
-
-  publications.withType<MavenPublication> {
-
-    // Stub javadoc.jar artifact
-//    artifact(javadocJar.get())
-
-
+  maven {
+    name = "GitHubPackages"
+    setUrl("https://maven.pkg.github.com/xemantic/xemantic-kotlin-swing-dsl")
+    credentials {
+      username = System.getenv("GITHUB_ACTOR")
+      password = System.getenv("GITHUB_TOKEN")
+    }
   }
 }
 
 signing {
-//  sign(publishing.publications)
+  if (
+    project.hasProperty("signing.keyId")
+    && project.hasProperty("signing.password")
+    && project.hasProperty("signing.secretKeyRingFile")
+  ) {
+    sign(publishing.publications)
+  }
 }
