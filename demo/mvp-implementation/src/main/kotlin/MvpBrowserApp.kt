@@ -1,7 +1,7 @@
 /*
  * This file is part of xemantic-kotlin-swing-dsl - Kotlin goodies for Java Swing.
  *
- * Copyright (C) 2021  Kazimierz Pogoda
+ * Copyright (C) 2024  Kazimierz Pogoda
  *
  * xemantic-kotlin-swing-dsl is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License as
@@ -17,21 +17,20 @@
  * along with xemantic-kotlin-swing-dsl. If not,
  * see <https://www.gnu.org/licenses/>.
  */
+package com.xemantic.kotlin.swing.demo.mvp
 
-package com.xemantic.kotlin.swing
+import com.xemantic.kotlin.swing.*
+import kotlinx.coroutines.launch
 
-import com.badoo.reaktive.observable.observableInterval
-import com.badoo.reaktive.observable.subscribe
-import java.awt.Dimension
-import javax.swing.SwingConstants
-
-fun main() = mainFrame("swingScheduler example") {
-  contentPane = label{
-    observableInterval(1000, swingScheduler)
-      .subscribe { tick ->
-        text = tick.toString()
-      }
-    preferredSize = Dimension(100, 100)
-    horizontalAlignment = SwingConstants.CENTER
+fun main(vararg args: String) = MainWindow("My Browser") {
+  val internet = DefaultInternet()
+  val view = SwingBrowserView()
+  val presenter = BrowserPresenter(view, scope, internet)
+  if (args.isNotEmpty()) {
+    val url = args[0]
+    scope.launch {
+      presenter.open(url)
+    }
   }
+  view.swingComponent
 }
