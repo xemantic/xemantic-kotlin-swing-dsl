@@ -117,15 +117,13 @@ When run it will produce:
 * declarative instead of imperative UI building
 * reactive event handling using `Flow`s, 
 
-And here is an equivalent code in Java for the sake of comparison:
-
 The code above is taken from the
 [MyBrowserKotlin](demo/simple-kotlin-dsl/src/main/kotlin/MyBrowserKotlin.kt) demo.
 
 ### How would it look in pure Java Swing?
 
 For the sake of comparison the
-[MyBrowserKotlin](demo/simple-java/src/main/java/com/xemantic/kotlin/swing/demo/MyBrowserJava.java)
+[MyBrowserJava](demo/simple-java/src/main/java/com/xemantic/kotlin/swing/demo/MyBrowserJava.java)
 demo implements exactly the same "browser" in pure Java.
 
 ## Other examples
