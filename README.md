@@ -4,12 +4,9 @@ _Express your Swing code easily in Kotlin_
 
 ## Why?
 
-Kotlin provides incredible language sugar over pure Java. While coding in Kotlin,
-sometimes I still need to use old good Java frameworks, like Swing, for example
-when writing plugins for the
-[IntelliJ Platform](https://www.jetbrains.com/opensource/idea/). Using Kotlin
-instead of Java already makes the code more concise, but **what if the
-Swing was written from scratch, to provide Kotlin-idiomatic way of doing things?**
+Kotlin provides incredible language sugar over pure Java. Using Kotlin
+instead of Java for writing Swing UI already makes the code more concise, but
+**what if the Swing was written from scratch, to provide Kotlin-idiomatic way of doing things?**
 This is the intent behind the `xemantic-kotlin-swing-dsl` library - to deliver a
 [Domain Specific Language](https://en.wikipedia.org/wiki/Domain-specific_language)
 for building Swing based UI and react to UI events by utilizing
@@ -89,7 +86,7 @@ fun main() = MainWindow("My Browser") {
           east { goButton }
         }
       }
-      center { ScrollPane(contentBox) }
+      center { ScrollPane { contentBox } }
     }
   }
 
