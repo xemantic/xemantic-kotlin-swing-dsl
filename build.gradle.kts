@@ -28,6 +28,7 @@ allprojects {
   repositories {
     mavenCentral()
   }
+
 }
 
 publishing {
@@ -60,26 +61,29 @@ publishing {
       }
     }
   }
+
+  repositories {
+    maven {
+      name = "GitHubPackages"
+      setUrl("https://maven.pkg.github.com/xemantic/xemantic-kotlin-swing-dsl")
+      credentials {
+        username = System.getenv("GITHUB_ACTOR")
+        password = System.getenv("GITHUB_TOKEN")
+      }
+    }
+//      maven {
+//        name = "OSSRH"
+//        setUrl("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+//        credentials {
+//          username = System.getenv("MAVEN_USERNAME")
+//          password = System.getenv("MAVEN_PASSWORD")
+//        }
+//      }
+  }
+
 }
 
-repositories {
-  maven {
-    name = "OSSRH"
-    setUrl("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-    credentials {
-      username = System.getenv("MAVEN_USERNAME")
-      password = System.getenv("MAVEN_PASSWORD")
-    }
-  }
-  maven {
-    name = "GitHubPackages"
-    setUrl("https://maven.pkg.github.com/xemantic/xemantic-kotlin-swing-dsl")
-    credentials {
-      username = System.getenv("GITHUB_ACTOR")
-      password = System.getenv("GITHUB_TOKEN")
-    }
-  }
-}
+
 
 signing {
   if (

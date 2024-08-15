@@ -59,4 +59,16 @@ publishing {
       }
     }
   }
+
+  repositories {
+    maven {
+      name = "GitHubPackages"
+      setUrl("https://maven.pkg.github.com/xemantic/xemantic-kotlin-swing-dsl")
+      credentials {
+        username = System.getenv("GITHUB_ACTOR")
+        password = System.getenv("GITHUB_TOKEN")
+      }
+    }
+  }
+
 }
