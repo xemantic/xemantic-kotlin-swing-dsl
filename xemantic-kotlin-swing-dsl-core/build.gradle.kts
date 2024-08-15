@@ -28,3 +28,35 @@ dependencies {
   api(libs.kotlinx.coroutines.core)
   runtimeOnly(libs.kotlinx.coroutines.swing)
 }
+
+publishing {
+
+  publications {
+    create<MavenPublication>("mavenJava") {
+      groupId = "com.xemantic.kotlin"
+      from(components["kotlin"])
+      pom {
+        name.set("xemantic-kotlin-swing-dsl-core")
+        description.set("Kotlin goodies for Java Swing")
+        url.set("https://github.com/xemantic/xemantic-kotlin-swing-dsl")
+
+        licenses {
+          license {
+            name.set("GNU Lesser General Public License 3")
+            url.set("https://www.gnu.org/licenses/lgpl-3.0.en.html")
+          }
+        }
+        developers {
+          developer {
+            id.set("morisil")
+            name.set("Kazik Pogoda")
+            email.set("morisil@xemantic.com")
+          }
+        }
+        scm {
+          url.set("https://github.com/xemantic/xemantic-kotlin-swing-dsl")
+        }
+      }
+    }
+  }
+}
