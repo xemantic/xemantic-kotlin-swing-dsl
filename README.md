@@ -100,7 +100,7 @@ When run it will produce:
 
 * No `J` prefix in UI component names (historically `J` was added to differentiate
   Swing components from AWT components and is mostly irrelevant for modern purposes).
-* Master JFrame is created with the `WainWindow` builder, which also takes care of setting
+* Master JFrame is created with the `MainWindow` builder, which also takes care of setting
   up the `SwingScope` holding a coroutine scope bound to Swing's event dispatcher thread.
 * Instead of event listeners (callbacks), events are delivered through `Flow`s. The `listen()`
   function collects the flow in the newly launched coroutine, which is cancelled when the window
