@@ -1,8 +1,10 @@
 [versions]
 kotlin = "2.0.10"
-
 kotlinxCoroutines = "1.8.1"
 kotest = "5.9.1"
+
+versionsPlugin = "0.51.0"
+dokka = "1.9.20"
 
 [libraries]
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
@@ -13,4 +15,5 @@ kotest-assertions-core = { group = "io.kotest", name = "kotest-assertions-core",
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-versions = { id = "com.github.ben-manes.versions", version = "0.51.0" }
+versions = { id = "com.github.ben-manes.versions", version.ref = "versionsPlugin" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
