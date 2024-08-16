@@ -18,13 +18,19 @@
  * see <https://www.gnu.org/licenses/>.
  */
 
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+
 plugins {
   alias(libs.plugins.kotlin.jvm) apply false
   `maven-publish`
   signing
   alias(libs.plugins.versions)
   alias(libs.plugins.dokka) apply false
+  alias(libs.plugins.publish)
 }
+
+val githubAccount = "xemantic"
 
 allprojects {
   repositories {
@@ -34,7 +40,24 @@ allprojects {
 
 subprojects {
 
-  if (project.name.startsWith("xemantic")) {
+  afterEvaluate {
+    if (project.name != "demo") {
+      configure<JavaPluginExtension> {
+        toolchain {
+          languageVersion.set(JavaLanguageVersion.of(17))
+        }
+      }
+      if (project.name != "simple-java") {
+        tasks.named<KotlinCompilationTask<*>>("compileKotlin").configure {
+          compilerOptions {
+            apiVersion.set(KotlinVersion.KOTLIN_2_0)
+          }
+        }
+      }
+    }
+  }
+
+  if (project.name.startsWith(rootProject.name)) {
 
     apply(plugin = "maven-publish")
     apply(plugin = "java-library")
@@ -58,7 +81,11 @@ subprojects {
               )
             )
           }
-
+          metaInf {
+            from(rootProject.rootDir) {
+              include("LICENSE")
+            }
+          }
         }
 
         named<Jar>("javadocJar") {
@@ -71,20 +98,12 @@ subprojects {
         repositories {
           maven {
             name = "GitHubPackages"
-            setUrl("https://maven.pkg.github.com/xemantic/xemantic-kotlin-swing-dsl")
+            setUrl("https://maven.pkg.github.com/$githubAccount/${rootProject.name}")
             credentials {
               username = System.getenv("GITHUB_ACTOR")
               password = System.getenv("GITHUB_TOKEN")
             }
           }
-//      maven {
-//        name = "OSSRH"
-//        setUrl("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-//        credentials {
-//          username = System.getenv("MAVEN_USERNAME")
-//          password = System.getenv("MAVEN_PASSWORD")
-//        }
-//      }
         }
         publications {
           create<MavenPublication>("maven") {
@@ -92,7 +111,7 @@ subprojects {
             artifact(tasks.named<Jar>("javadocJar"))
             pom {
               description = "Kotlin goodies for Java Swing"
-              url = "https://github.com/xemantic/xemantic-kotlin-swing-dsl"
+              url = "https://github.com/$githubAccount/${rootProject.name}"
               inceptionYear = "2020"
               organization {
                 name = "Xemantic"
@@ -106,15 +125,17 @@ subprojects {
                 }
               }
               scm {
-                url = "https://github.com/xemantic/xemantic-kotlin-swing-dsl"
+                url = "https://github.com/$githubAccount/${rootProject.name}"
+                connection = "scm:git:git:github.com/$githubAccount/${rootProject.name}.git"
+                developerConnection = "scm:git:https://github.com/$githubAccount/${rootProject.name}.git"
               }
               ciManagement {
                 system = "GitHub"
-                url = "https://github.com/xemantic/xemantic-kotlin-swing-dsl/actions"
+                url = "https://github.com/$githubAccount/${rootProject.name}/actions"
               }
               issueManagement {
                 system = "GitHub"
-                url = "https://github.com/xemantic/xemantic-kotlin-swing-dsl/issues"
+                url = "https://github.com/$githubAccount/${rootProject.name}/issues"
               }
               developers {
                 developer {
@@ -133,12 +154,23 @@ subprojects {
 
 }
 
-//signing {
-//  if (
-//    project.hasProperty("signing.keyId")
-//    && project.hasProperty("signing.password")
-//    && project.hasProperty("signing.secretKeyRingFile")
-//  ) {
-//    sign(publishing.publications)
-//  }
-//}
+signing {
+  if (
+    project.hasProperty("signing.keyId")
+    && project.hasProperty("signing.password")
+    && project.hasProperty("signing.secretKeyRingFile")
+  ) {
+    sign(publishing.publications["maven"])
+  }
+}
+
+nexusPublishing {
+  repositories {
+    sonatype {  //only for users registered in Sonatype after 24 Feb 2021
+      nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+      snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+      username.set(System.getenv("SONATYPE_USER"))
+      password.set(System.getenv("SONATYPE_PASSWORD"))
+    }
+  }
+}
