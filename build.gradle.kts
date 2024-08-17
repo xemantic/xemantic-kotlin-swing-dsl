@@ -41,6 +41,8 @@ val signingPassword: String? by project
 val sonatypeUser: String? by project
 val sonatypePassword: String? by project
 
+println("github actor: $githubActor")
+
 allprojects {
   repositories {
     mavenCentral()
