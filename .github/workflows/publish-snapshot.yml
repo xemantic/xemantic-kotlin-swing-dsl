@@ -17,9 +17,8 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v4
     - name: Publish package
-      run: ./gradlew build publish
+#      run: ./gradlew build publish
+      run: echo $ORG_GRADLE_PROJECT_githubActor
       env:
-        ORG_GRADLE_PROJECT_githubActor: foo
-        ORG_GRADLE_PROJECT_githubToken: bar
-#        ORG_GRADLE_PROJECT_githubActor: ${{ secrets.GITHUBACTOR }}
-#        ORG_GRADLE_PROJECT_githubToken: ${{ secrets.GITHUBTOKEN }}
+        ORG_GRADLE_PROJECT_githubActor: ${{ secrets.GITHUBACTOR }}
+        ORG_GRADLE_PROJECT_githubToken: ${{ secrets.GITHUBTOKEN }}
