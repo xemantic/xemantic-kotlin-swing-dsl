@@ -34,6 +34,12 @@ plugins {
 
 val githubAccount = "xemantic"
 val isSnapshotVersion = project.version.toString().endsWith("-SNAPSHOT")
+val githubActor: String? by project
+val githubToken: String? by project
+val signingKey: String? by project
+val signingPassword: String? by project
+val sonatypeUser: String? by project
+val sonatypePassword: String? by project
 
 allprojects {
   repositories {
@@ -108,8 +114,6 @@ subprojects {
             name = "GitHubPackages"
             setUrl("https://maven.pkg.github.com/$githubAccount/${rootProject.name}")
             credentials {
-              val githubActor: String? by project
-              val githubToken: String? by project
               username = githubActor
               password = githubToken
             }
@@ -161,8 +165,6 @@ subprojects {
     }
 
     configure<SigningExtension> {
-      val signingKey: String? by project
-      val signingPassword: String? by project
       useInMemoryPgpKeys(
         signingKey,
         signingPassword
@@ -184,8 +186,6 @@ nexusPublishing {
     sonatype {  //only for users registered in Sonatype after 24 Feb 2021
       nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
       snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-      val sonatypeUser: String? by project
-      val sonatypePassword: String? by project
       username.set(sonatypeUser)
       password.set(sonatypePassword)
     }
