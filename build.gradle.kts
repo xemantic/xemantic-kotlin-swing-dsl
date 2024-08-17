@@ -31,6 +31,7 @@ plugins {
 }
 
 val githubAccount = "xemantic"
+val isSnapshotVersion = project.version.toString().endsWith("-SNAPSHOT")
 
 allprojects {
   repositories {
@@ -39,6 +40,12 @@ allprojects {
 }
 
 subprojects {
+
+  if (project.name == "simple-java") {
+    apply(plugin = "java")
+  } else {
+    apply(plugin = "org.jetbrains.kotlin.jvm")
+  }
 
   afterEvaluate {
     if (project.name != "demo") {
@@ -62,31 +69,38 @@ subprojects {
     apply(plugin = "maven-publish")
     apply(plugin = "java-library")
     apply(plugin = "org.jetbrains.dokka")
+    apply(plugin = "signing")
 
     configure<JavaPluginExtension> {
       withJavadocJar()
       withSourcesJar()
     }
 
+    tasks {
+
+      withType<Jar> {
+        manifest {
+          attributes(
+            mapOf(
+              "Implementation-Title" to project.name,
+              "Implementation-Version" to project.version
+            )
+          )
+        }
+        metaInf {
+          from(rootProject.rootDir) {
+            include("LICENSE")
+          }
+        }
+      }
+
+    }
+
     afterEvaluate {
 
       tasks {
 
-        withType<Jar> {
-          manifest {
-            attributes(
-              mapOf(
-                "Implementation-Title" to project.name,
-                "Implementation-Version" to project.version
-              )
-            )
-          }
-          metaInf {
-            from(rootProject.rootDir) {
-              include("LICENSE")
-            }
-          }
-        }
+
 
         named<Jar>("javadocJar") {
           from(named("dokkaJavadoc"))
@@ -96,12 +110,14 @@ subprojects {
 
       configure<PublishingExtension> {
         repositories {
-          maven {
-            name = "GitHubPackages"
-            setUrl("https://maven.pkg.github.com/$githubAccount/${rootProject.name}")
-            credentials {
-              username = System.getenv("GITHUB_ACTOR")
-              password = System.getenv("GITHUB_TOKEN")
+          if (isSnapshotVersion) {
+            maven {
+              name = "GitHubPackages"
+              setUrl("https://maven.pkg.github.com/$githubAccount/${rootProject.name}")
+              credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+              }
             }
           }
         }
@@ -148,20 +164,23 @@ subprojects {
           }
         }
       }
+
+      configure<SigningExtension> {
+        useInMemoryPgpKeys(
+          System.getenv("SIGN_KEY"),
+          System.getenv("SIGN_PASSPHRASE")
+        )
+        sign(publishing.publications["maven"])
+      }
+
+      tasks.withType<Sign> {
+        onlyIf { System.getenv("SIGN_KEY") != null }
+      }
+
     }
 
   }
 
-}
-
-signing {
-  if (
-    project.hasProperty("signing.keyId")
-    && project.hasProperty("signing.password")
-    && project.hasProperty("signing.secretKeyRingFile")
-  ) {
-    sign(publishing.publications["maven"])
-  }
 }
 
 nexusPublishing {

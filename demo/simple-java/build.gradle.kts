@@ -18,10 +18,6 @@
  * see <https://www.gnu.org/licenses/>.
  */
 
-plugins {
-  java
-}
-
 dependencies {
   implementation(project(":xemantic-kotlin-swing-dsl-core"))
 }

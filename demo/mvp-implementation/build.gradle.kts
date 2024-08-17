@@ -18,10 +18,6 @@
  * see <https://www.gnu.org/licenses/>.
  */
 
-plugins {
-  alias(libs.plugins.kotlin.jvm)
-}
-
 dependencies {
   implementation(project(":xemantic-kotlin-swing-dsl-core"))
   implementation(project(":demo:mvp-presenter"))
