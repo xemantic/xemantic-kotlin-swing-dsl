@@ -19,5 +19,7 @@ jobs:
     - name: Publish package
       run: ./gradlew build publish
       env:
-        ORG_GRADLE_PROJECT_githubActor: ${{ secrets.GITHUBACTOR }}
-        ORG_GRADLE_PROJECT_githubToken: ${{ secrets.GITHUBTOKEN }}
+        ORG_GRADLE_PROJECT_githubActor: foo
+        ORG_GRADLE_PROJECT_githubToken: bar
+#        ORG_GRADLE_PROJECT_githubActor: ${{ secrets.GITHUBACTOR }}
+#        ORG_GRADLE_PROJECT_githubToken: ${{ secrets.GITHUBTOKEN }}
