@@ -1,0 +1,30 @@
+name: Publish release version to GitHub Packages
+on:
+  push:
+    tags:
+      - '**'
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+    - name: "Get version from tag"
+      id: version
+      run: echo "version=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
+    - name: Checkout sources
+      uses: actions/checkout@v4
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: 21
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v4
+    - name: Publish package
+      run: ./gradlew -Pversion=${{ steps.version.outputs.version }} build sign
+      env:
+        ORG_GRADLE_PROJECT_githubActor: ${{ secrets.GITHUBACTOR }}
+        ORG_GRADLE_PROJECT_githubToken: ${{ secrets.GITHUBTOKEN }}
+        ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
+        ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
+        ORG_GRADLE_PROJECT_sonatypeUser: ${{ secrets.SONATYPE_USER }}
+        ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
