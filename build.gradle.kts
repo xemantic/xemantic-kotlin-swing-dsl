@@ -43,23 +43,19 @@ subprojects {
 
   if (project.name == "simple-java") {
     apply(plugin = "java")
-  } else {
+  } else if (project.name != "demo") {
     apply(plugin = "org.jetbrains.kotlin.jvm")
+    tasks.named<KotlinCompilationTask<*>>("compileKotlin").configure {
+      compilerOptions {
+        apiVersion.set(KotlinVersion.KOTLIN_2_0)
+      }
+    }
   }
 
-  afterEvaluate {
-    if (project.name != "demo") {
-      configure<JavaPluginExtension> {
-        toolchain {
-          languageVersion.set(JavaLanguageVersion.of(17))
-        }
-      }
-      if (project.name != "simple-java") {
-        tasks.named<KotlinCompilationTask<*>>("compileKotlin").configure {
-          compilerOptions {
-            apiVersion.set(KotlinVersion.KOTLIN_2_0)
-          }
-        }
+  if (project.name != "demo") {
+    configure<JavaPluginExtension> {
+      toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
       }
     }
   }
@@ -94,89 +90,79 @@ subprojects {
         }
       }
 
+      named<Jar>("javadocJar") {
+        from(named("dokkaJavadoc"))
+      }
+
     }
 
-    afterEvaluate {
-
-      tasks {
-
-
-
-        named<Jar>("javadocJar") {
-          from(named("dokkaJavadoc"))
-        }
-
-      }
-
-      configure<PublishingExtension> {
-        repositories {
-          if (isSnapshotVersion) {
-            maven {
-              name = "GitHubPackages"
-              setUrl("https://maven.pkg.github.com/$githubAccount/${rootProject.name}")
-              credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
-              }
+    configure<PublishingExtension> {
+      repositories {
+        if (isSnapshotVersion) {
+          maven {
+            name = "GitHubPackages"
+            setUrl("https://maven.pkg.github.com/$githubAccount/${rootProject.name}")
+            credentials {
+              username = System.getenv("GITHUB_ACTOR")
+              password = System.getenv("GITHUB_TOKEN")
             }
           }
         }
-        publications {
-          create<MavenPublication>("maven") {
-            from(components["kotlin"])
-            artifact(tasks.named<Jar>("javadocJar"))
-            pom {
-              description = "Kotlin goodies for Java Swing"
+      }
+      publications {
+        create<MavenPublication>("maven") {
+          from(components["kotlin"])
+          artifact(tasks.named<Jar>("javadocJar"))
+          pom {
+            description = "Kotlin goodies for Java Swing"
+            url = "https://github.com/$githubAccount/${rootProject.name}"
+            inceptionYear = "2020"
+            organization {
+              name = "Xemantic"
+              url = "https://xemantic.com"
+            }
+            licenses {
+              license {
+                name = "GNU Lesser General Public License 3"
+                url = "https://www.gnu.org/licenses/lgpl-3.0.en.html"
+                distribution = "repo"
+              }
+            }
+            scm {
               url = "https://github.com/$githubAccount/${rootProject.name}"
-              inceptionYear = "2020"
-              organization {
-                name = "Xemantic"
-                url = "https://xemantic.com"
-              }
-              licenses {
-                license {
-                  name = "GNU Lesser General Public License 3"
-                  url = "https://www.gnu.org/licenses/lgpl-3.0.en.html"
-                  distribution = "repo"
-                }
-              }
-              scm {
-                url = "https://github.com/$githubAccount/${rootProject.name}"
-                connection = "scm:git:git:github.com/$githubAccount/${rootProject.name}.git"
-                developerConnection = "scm:git:https://github.com/$githubAccount/${rootProject.name}.git"
-              }
-              ciManagement {
-                system = "GitHub"
-                url = "https://github.com/$githubAccount/${rootProject.name}/actions"
-              }
-              issueManagement {
-                system = "GitHub"
-                url = "https://github.com/$githubAccount/${rootProject.name}/issues"
-              }
-              developers {
-                developer {
-                  id = "morisil"
-                  name = "Kazik Pogoda"
-                  email = "morisil@xemantic.com"
-                }
+              connection = "scm:git:git:github.com/$githubAccount/${rootProject.name}.git"
+              developerConnection = "scm:git:https://github.com/$githubAccount/${rootProject.name}.git"
+            }
+            ciManagement {
+              system = "GitHub"
+              url = "https://github.com/$githubAccount/${rootProject.name}/actions"
+            }
+            issueManagement {
+              system = "GitHub"
+              url = "https://github.com/$githubAccount/${rootProject.name}/issues"
+            }
+            developers {
+              developer {
+                id = "morisil"
+                name = "Kazik Pogoda"
+                email = "morisil@xemantic.com"
               }
             }
           }
         }
       }
+    }
 
-      configure<SigningExtension> {
-        useInMemoryPgpKeys(
-          System.getenv("SIGN_KEY"),
-          System.getenv("SIGN_PASSPHRASE")
-        )
-        sign(publishing.publications["maven"])
-      }
+    configure<SigningExtension> {
+      useInMemoryPgpKeys(
+        System.getenv("SIGN_KEY"),
+        System.getenv("SIGN_PASSPHRASE")
+      )
+      sign(publishing.publications["maven"])
+    }
 
-      tasks.withType<Sign> {
-        onlyIf { System.getenv("SIGN_KEY") != null }
-      }
-
+    tasks.withType<Sign> {
+      onlyIf { System.getenv("SIGN_KEY") != null }
     }
 
   }
