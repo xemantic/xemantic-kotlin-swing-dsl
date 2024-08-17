@@ -20,6 +20,8 @@
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 plugins {
   alias(libs.plugins.kotlin.jvm) apply false
@@ -79,7 +81,10 @@ subprojects {
           attributes(
             mapOf(
               "Implementation-Title" to project.name,
-              "Implementation-Version" to project.version
+              "Implementation-Version" to project.version,
+              "Implementation-Vendor" to "Xemantic",
+              "Built-By" to "Gradle ${gradle.gradleVersion}",
+              "Built-Date" to LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
             )
           )
         }
@@ -103,8 +108,10 @@ subprojects {
             name = "GitHubPackages"
             setUrl("https://maven.pkg.github.com/$githubAccount/${rootProject.name}")
             credentials {
-              username = System.getenv("GITHUB_ACTOR")
-              password = System.getenv("GITHUB_TOKEN")
+              val githubActor: String? by project
+              val githubToken: String? by project
+              username = githubActor
+              password = githubToken
             }
           }
         }
@@ -154,15 +161,18 @@ subprojects {
     }
 
     configure<SigningExtension> {
+      val signingKey: String? by project
+      val signingPassword: String? by project
       useInMemoryPgpKeys(
-        System.getenv("SIGN_KEY"),
-        System.getenv("SIGN_PASSPHRASE")
+        signingKey,
+        signingPassword
       )
       sign(publishing.publications["maven"])
     }
 
     tasks.withType<Sign> {
-      onlyIf { System.getenv("SIGN_KEY") != null }
+      val signingKey: String? by project
+      onlyIf { signingKey != null }
     }
 
   }
@@ -174,8 +184,10 @@ nexusPublishing {
     sonatype {  //only for users registered in Sonatype after 24 Feb 2021
       nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
       snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-      username.set(System.getenv("SONATYPE_USER"))
-      password.set(System.getenv("SONATYPE_PASSWORD"))
+      val sonatypeUser: String? by project
+      val sonatypePassword: String? by project
+      username.set(sonatypeUser)
+      password.set(sonatypePassword)
     }
   }
 }
