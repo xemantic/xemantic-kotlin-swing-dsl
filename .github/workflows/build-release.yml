@@ -7,9 +7,11 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-    - name: "Get version from tag"
-      id: version
-      run: echo "version=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
+    - name: Write release version
+      run: |
+        VERSION=${GITHUB_REF_NAME#v}
+        echo Version: $VERSION
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
     - name: Checkout sources
       uses: actions/checkout@v4
     - name: Setup Java
