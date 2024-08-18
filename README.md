@@ -23,7 +23,7 @@ dependencies {
 }
 ```
 
-:information_source: the `kotlinx-coroutines-swing` version should be aligned with the version of other coroutine
+:warning: the `kotlinx-coroutines-swing` version should be aligned with the version of other coroutine
 libraries used in your project. If unsure, find the latest version of the `kotlinx-coroutines` library.
 
 ## Example
