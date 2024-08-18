@@ -139,12 +139,14 @@ subprojects {
       }
     }
 
-    configure<SigningExtension> {
-      useInMemoryPgpKeys(
-        signingKey,
-        signingPassword
-      )
-      sign(publishing.publications["maven"])
+    if (isReleaseBuild) {
+      configure<SigningExtension> {
+        useInMemoryPgpKeys(
+          signingKey,
+          signingPassword
+        )
+        sign(publishing.publications["maven"])
+      }
     }
 
     tasks {
@@ -170,11 +172,6 @@ subprojects {
 
       named<Jar>("javadocJar") {
         from(named("dokkaJavadoc"))
-      }
-
-      withType<Sign> {
-        val signingKey: String? by project
-        onlyIf { signingKey != null }
       }
 
     }
