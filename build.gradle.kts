@@ -105,6 +105,7 @@ subprojects {
           from(components["kotlin"])
           artifact(tasks.named<Jar>("javadocJar"))
           pom {
+            name = "xemantic-kotlin-swing-dsl"
             description = "Kotlin goodies for Java Swing"
             url = "https://github.com/$githubAccount/${rootProject.name}"
             inceptionYear = "2020"
