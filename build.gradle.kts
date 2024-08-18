@@ -41,9 +41,12 @@ val signingPassword: String? by project
 val sonatypeUser: String? by project
 val sonatypePassword: String? by project
 
-println("Project: ${project.name}")
-println("Version: ${project.version}")
-println("Release: $isReleaseBuild")
+println("""
+  Project: ${project.name}
+  Version: ${project.version}
+  Release: $isReleaseBuild
+""".trimIndent()
+)
 
 allprojects {
   repositories {
