@@ -14,12 +14,12 @@ for building Swing based UI and react to UI events by utilizing
 
 ## Usage
 
-Add to your `build.gradle.kts`
+Add to your `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-  implementation("com.xemantic.kotlin:xemantic-kotlin-swing-dsl-core:$libVersion")
-  runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-swing:$coroutinesVersion")
+  implementation("com.xemantic.kotlin:xemantic-kotlin-swing-dsl-core:1.0")
+  runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.1")
 }
 ```
 
@@ -129,3 +129,16 @@ demo implements exactly the same "browser" in pure Java.
 ## Other examples
 
 The [demo](demo) folder contains additional examples.
+
+## Testing
+
+This library is also supporting testing of presenters, if your code adheres to Model View Presenter
+principles. You can check an example in the [mvp-presenter demo](demo/mvp-presenter) module.
+
+Add this dependency to your `build.gradle.kts` for testing support:
+
+```kotlin
+dependencies {
+  testImplementation("com.xemantic.kotlin:xemantic-kotlin-swing-dsl-test:1.0")
+}
+```
