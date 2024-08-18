@@ -22,7 +22,7 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v4
     - name: Publish package
-      run: ./gradlew -Pversion=${VERSION} build sign
+      run: ./gradlew -Pversion=${VERSION} build publishToSonatype closeAndReleaseSonatypeStagingRepository
       env:
         ORG_GRADLE_PROJECT_githubActor: ${{ secrets.GITHUBACTOR }}
         ORG_GRADLE_PROJECT_githubToken: ${{ secrets.GITHUBTOKEN }}
