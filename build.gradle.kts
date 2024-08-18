@@ -104,6 +104,7 @@ subprojects {
         create<MavenPublication>("maven") {
           from(components["kotlin"])
           artifact(tasks.named<Jar>("javadocJar"))
+          artifact(tasks.named<Jar>("sourcesJar"))
           pom {
             name = "xemantic-kotlin-swing-dsl"
             description = "Kotlin goodies for Java Swing"
