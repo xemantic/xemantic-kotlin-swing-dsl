@@ -33,7 +33,7 @@ plugins {
 }
 
 val githubAccount = "xemantic"
-val isSnapshotVersion = project.version.toString().endsWith("-SNAPSHOT")
+val isReleaseBuild = !project.version.toString().endsWith("-SNAPSHOT")
 val githubActor: String? by project
 val githubToken: String? by project
 val signingKey: String? by project
@@ -82,36 +82,9 @@ subprojects {
       withSourcesJar()
     }
 
-    tasks {
-
-      withType<Jar> {
-        manifest {
-          attributes(
-            mapOf(
-              "Implementation-Title" to project.name,
-              "Implementation-Version" to project.version,
-              "Implementation-Vendor" to "Xemantic",
-              "Built-By" to "Gradle ${gradle.gradleVersion}",
-              "Built-Date" to LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-            )
-          )
-        }
-        metaInf {
-          from(rootProject.rootDir) {
-            include("LICENSE")
-          }
-        }
-      }
-
-      named<Jar>("javadocJar") {
-        from(named("dokkaJavadoc"))
-      }
-
-    }
-
     configure<PublishingExtension> {
       repositories {
-        if (isSnapshotVersion) {
+        if (!isReleaseBuild) {
           maven {
             name = "GitHubPackages"
             setUrl("https://maven.pkg.github.com/$githubAccount/${rootProject.name}")
@@ -174,22 +147,51 @@ subprojects {
       sign(publishing.publications["maven"])
     }
 
-    tasks.withType<Sign> {
-      val signingKey: String? by project
-      onlyIf { signingKey != null }
+    tasks {
+
+      withType<Jar> {
+        manifest {
+          attributes(
+            mapOf(
+              "Implementation-Title" to project.name,
+              "Implementation-Version" to project.version,
+              "Implementation-Vendor" to "Xemantic",
+              "Built-By" to "Gradle ${gradle.gradleVersion}",
+              "Built-Date" to LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            )
+          )
+        }
+        metaInf {
+          from(rootProject.rootDir) {
+            include("LICENSE")
+          }
+        }
+      }
+
+      named<Jar>("javadocJar") {
+        from(named("dokkaJavadoc"))
+      }
+
+      withType<Sign> {
+        val signingKey: String? by project
+        onlyIf { signingKey != null }
+      }
+
     }
 
   }
 
 }
 
-nexusPublishing {
-  repositories {
-    sonatype {  //only for users registered in Sonatype after 24 Feb 2021
-      nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-      snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-      username.set(sonatypeUser)
-      password.set(sonatypePassword)
+if (!isReleaseBuild) {
+  nexusPublishing {
+    repositories {
+      sonatype {  //only for users registered in Sonatype after 24 Feb 2021
+        nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+        snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+        username.set(sonatypeUser)
+        password.set(sonatypePassword)
+      }
     }
   }
 }
