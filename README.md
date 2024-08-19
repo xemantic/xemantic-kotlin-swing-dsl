@@ -1,7 +1,7 @@
 # xemantic-kotlin-swing-dsl
 
 ![main](https://github.com/xemantic/xemantic-kotlin-swing-dsl/actions/workflows/build-main.yml/badge.svg)
-[![](https://discord.gg/vQktqqN2Vn)](https://discord.gg/vQktqqN2Vn)
+[![](https://dcbadge.limes.pink/api/server/https://discord.gg/vQktqqN2Vn?style=flat)](https://discord.gg/vQktqqN2Vn)
 
 _Express your Swing code easily in Kotlin_
 
