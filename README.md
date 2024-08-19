@@ -1,5 +1,7 @@
 # xemantic-kotlin-swing-dsl
 
+![master](https://github.com/xemantic/xemantic-kotlin-swing-dsl/actions/workflows/build_snapshot.yml/badge.svg)
+
 _Express your Swing code easily in Kotlin_
 
 ## Why?
