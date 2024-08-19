@@ -1,4 +1,4 @@
-name: Publish release version to GitHub Packages
+name: build release
 on:
   push:
     tags:

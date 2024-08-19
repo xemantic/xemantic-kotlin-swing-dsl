@@ -1,10 +1,10 @@
-name: Publish SNAPSHOT version to GitHub Packages
+name: build main
 on:
   push:
     branches:
       - main
 jobs:
-  build_snapshot:
+  build_main:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout sources
