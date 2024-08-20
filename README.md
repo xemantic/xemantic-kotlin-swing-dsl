@@ -2,8 +2,7 @@
 
 _Express your Swing code easily in Kotlin_
 
-[<img alt="Maven Central Version" src="https://img.shields.io/maven-central/v/com.xemantic.kotlin/xemantic-kotlin-swing-dsl-core?style=for-the-badge">
-](https://central.sonatype.com/namespace/com.xemantic.kotlin)
+[<img alt="Maven Central Version" src="https://img.shields.io/maven-central/v/com.xemantic.kotlin/xemantic-kotlin-swing-dsl-core?style=for-the-badge">](https://central.sonatype.com/namespace/com.xemantic.kotlin)
 ![GitHub Release Date](https://img.shields.io/github/release-date/xemantic/xemantic-kotlin-swing-dsl?style=for-the-badge)
 [<img alt="license" src="https://img.shields.io/github/license/thelumiereguy/ShaderShowcaseApp?color=blue&style=for-the-badge">]()
 
