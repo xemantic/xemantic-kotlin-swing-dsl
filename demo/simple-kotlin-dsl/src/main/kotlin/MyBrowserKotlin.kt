@@ -26,6 +26,8 @@ import java.awt.Dimension
 import java.net.URI
 
 fun main() = MainWindow("My Browser") { window ->
+  window.preferredSize = Dimension(300, 300)
+
   val urlBox = TextField()
   val goButton = Button("Go!") { isEnabled = false }
   val contentBox = TextArea()
@@ -55,27 +57,17 @@ fun main() = MainWindow("My Browser") { window ->
       goButton.isEnabled = true
     }
 
-  window.preferredSize = Dimension(300, 300)
-
-  Border.empty(4) {
-    BorderPanel {
-      layout {
-        hgap = 4
-        vgap = 4
-      }
-      north {
+  BorderPanel {
+    north {
+      Border.empty(4) {
         BorderPanel {
-          layout {
-            hgap = 4
-            vgap = 4
-          }
+          layout { gap = 4 }
           west { Label("URL") }
           center { urlBox }
           east { goButton }
         }
       }
-      center { ScrollPane { contentBox } }
     }
+    center { ScrollPane { contentBox } }
   }
-
 }

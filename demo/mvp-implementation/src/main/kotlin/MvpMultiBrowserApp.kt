@@ -20,13 +20,15 @@
 package com.xemantic.kotlin.swing.demo.mvp
 
 import com.xemantic.kotlin.swing.*
+import java.awt.Dimension
 
 fun main() = MainWindow("Browser spawner") {
   val internet = DefaultInternet()
   val newBrowserButton = Button("New browser")
   var browserCounter = 1
   newBrowserButton.actionEvents.listen {
-    frame("Browser ${browserCounter++}") {
+    frame("Browser ${browserCounter++}") { window ->
+      window.preferredSize = Dimension(300, 300)
       val view = SwingBrowserView()
       BrowserPresenter(view, scope, internet)
       view.swingComponent

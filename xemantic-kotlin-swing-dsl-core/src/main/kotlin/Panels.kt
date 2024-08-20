@@ -126,3 +126,10 @@ class PanelBuilder<L : LayoutManager>(
   }
 
 }
+
+var BorderLayout.gap
+  get() = vgap
+  set(value) {
+    vgap = value
+    hgap = value
+  }

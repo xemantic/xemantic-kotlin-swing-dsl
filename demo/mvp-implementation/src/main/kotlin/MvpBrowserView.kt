@@ -45,26 +45,19 @@ class SwingBrowserView : BrowserView {
     get() = urlField.text
     set(value) { urlField.text = value }
 
-  val swingComponent = Border.empty(4) {
-    BorderPanel {
-      layout {
-        hgap = 4
-        vgap = 4
-      }
-      north {
+  val swingComponent = BorderPanel {
+    north {
+      Border.empty(4) {
         BorderPanel {
-          layout {
-            hgap = 4
-            vgap = 4
-          }
+          layout { gap = 4 }
           west { Label("URL") }
           center { urlField }
           east { goAction }
         }
       }
-      center {
-        ScrollPane { contentBox }
-      }
+    }
+    center {
+      ScrollPane { contentBox }
     }
   }
 
