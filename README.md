@@ -3,35 +3,36 @@
 _Express your Swing code easily in Kotlin_
 
 [<img alt="Maven Central Version" src="https://img.shields.io/maven-central/v/com.xemantic.kotlin/xemantic-kotlin-swing-dsl-core?style=for-the-badge">](https://central.sonatype.com/namespace/com.xemantic.kotlin)
-![GitHub Release Date](https://img.shields.io/github/release-date/xemantic/xemantic-kotlin-swing-dsl?style=for-the-badge)
-[<img alt="license" src="https://img.shields.io/github/license/thelumiereguy/ShaderShowcaseApp?color=blue&style=for-the-badge">]()
+[<img alt="GitHub Release Date" src="https://img.shields.io/github/release-date/xemantic/xemantic-kotlin-swing-dsl?style=for-the-badge">](https://github.com/xemantic/xemantic-kotlin-swing-dsl/releases)
+[<img alt="license" src="https://img.shields.io/github/license/xemantic/xemantic-kotlin-swing-dsl?color=blue&style=for-the-badge">](https://github.com/xemantic/xemantic-kotlin-swing-dsl/blob/main/LICENSE)
 
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/xemantic/xemantic-kotlin-swing-dsl/build-main.yml?style=for-the-badge)
-![GitHub branch check runs](https://img.shields.io/github/check-runs/xemantic/xemantic-kotlin-swing-dsl/main?style=for-the-badge)
-![GitHub commits since latest release](https://img.shields.io/github/commits-since/xemantic/xemantic-kotlin-swing-dsl/latest?style=for-the-badge)
-![GitHub last commit](https://img.shields.io/github/last-commit/xemantic/xemantic-kotlin-swing-dsl?style=for-the-badge)
+[<img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/xemantic/xemantic-kotlin-swing-dsl/build-main.yml?style=for-the-badge">](https://github.com/xemantic/xemantic-kotlin-swing-dsl/actions/workflows/build-main.yml)
+[<img alt="GitHub branch check runs" src="https://img.shields.io/github/check-runs/xemantic/xemantic-kotlin-swing-dsl/main?style=for-the-badge">](https://github.com/xemantic/xemantic-kotlin-swing-dsl/actions/workflows/build-main.yml)
+[<img alt="GitHub commits since latest release" src="https://img.shields.io/github/commits-since/xemantic/xemantic-kotlin-swing-dsl/latest?style=for-the-badge">](https://github.com/xemantic/xemantic-kotlin-swing-dsl/commits/main/)
+[<img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/xemantic/xemantic-kotlin-swing-dsl?style=for-the-badge">](https://github.com/xemantic/xemantic-kotlin-swing-dsl/commits/main/)
 
-![GitHub contributors](https://img.shields.io/github/contributors/xemantic/xemantic-kotlin-swing-dsl?style=for-the-badge)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/t/xemantic/xemantic-kotlin-swing-dsl?style=for-the-badge)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/xemantic/xemantic-kotlin-swing-dsl?style=for-the-badge)
-![GitHub Created At](https://img.shields.io/github/created-at/xemantic/xemantic-kotlin-swing-dsl?style=for-the-badge)
-![kotlin version](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fxemantic%2Fxemantic-kotlin-swing-dsl%2Fmain%2Fgradle%2Flibs.versions.toml&query=versions.kotlin&style=for-the-badge&label=kotlin)
-![kotlinx-coroutines version](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fxemantic%2Fxemantic-kotlin-swing-dsl%2Fmain%2Fgradle%2Flibs.versions.toml&query=versions.kotlinxCoroutines&style=for-the-badge&label=kotlinx-coroutines)
+[<img alt="GitHub contributors" src="https://img.shields.io/github/contributors/xemantic/xemantic-kotlin-swing-dsl?style=for-the-badge">](https://github.com/xemantic/xemantic-kotlin-swing-dsl/graphs/contributors)
+[<img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/t/xemantic/xemantic-kotlin-swing-dsl?style=for-the-badge">](https://github.com/xemantic/xemantic-kotlin-swing-dsl/commits/main/)
+[<img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/xemantic/xemantic-kotlin-swing-dsl?style=for-the-badge">]()
+[<img alt="GitHub Created At" src="https://img.shields.io/github/created-at/xemantic/xemantic-kotlin-swing-dsl?style=for-the-badge">](https://github.com/xemantic/xemantic-kotlin-swing-dsl/commit/39c1fa4c138d4c671868c973e2ad37b262ae03c2)
+[<img alt="kotlin version" src="https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fxemantic%2Fxemantic-kotlin-swing-dsl%2Fmain%2Fgradle%2Flibs.versions.toml&query=versions.kotlin&style=for-the-badge&label=kotlin">](https://kotlinlang.org/docs/releases.html)
+[<img alt="kotlinx-coroutines version" src="https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fxemantic%2Fxemantic-kotlin-swing-dsl%2Fmain%2Fgradle%2Flibs.versions.toml&query=versions.kotlinxCoroutines&style=for-the-badge&label=kotlinx-coroutines">](https://github.com/Kotlin/kotlinx.coroutines)
 
-[![](https://dcbadge.limes.pink/api/server/https://discord.gg/vQktqqN2Vn)](https://discord.gg/vQktqqN2Vn)
-![Discord](https://img.shields.io/discord/811561179280965673?style=for-the-badge&link=https%3A%2F%2Fdiscord.gg%2FvQktqqN2Vn)
-[<img alt="X (formerly Twitter) Follow" src="https://img.shields.io/twitter/follow/KazikPogoda?link=https%3A%2F%2Fx.com%2FKazikPogoda">
-](https://x.com/KazikPogoda)
+[<img alt="discord server" src="https://dcbadge.limes.pink/api/server/https://discord.gg/vQktqqN2Vn">](https://discord.gg/vQktqqN2Vn)
+[<img alt="discord users online" src="https://img.shields.io/discord/811561179280965673?style=for-the-badge">](https://discord.gg/vQktqqN2Vn)
+[<img alt="X (formerly Twitter) Follow" src="https://img.shields.io/twitter/follow/KazikPogoda">](https://x.com/KazikPogoda)
 
 ## Why?
 
-Kotlin provides incredible language sugar over pure Java. Using Kotlin
-instead of Java for writing Swing UI already makes the code more concise, but
+Kotlin provides incredible language sugar over pure Java. Using Kotlin for writing Swing UI already
+makes the code more concise, but
 **what if the Swing was written from scratch, to provide Kotlin-idiomatic way of doing things?**
 This is the intent behind the `xemantic-kotlin-swing-dsl` library - to deliver a
 [Domain Specific Language](https://en.wikipedia.org/wiki/Domain-specific_language)
 for building Swing based UI and react to UI events by utilizing
-[Kotlin coroutines](https://kotlinlang.org/docs/coroutines-overview.html). 
+[Kotlin coroutines](https://kotlinlang.org/docs/coroutines-overview.html). Historically I started this project when I needed to quickly assemble basic remote control
+interfaces for my art robots, which are using software stack developed
+in the [we-are-the-robots](https://github.com/xemantic/we-are-the-robots) project.
 
 ## Usage
 
