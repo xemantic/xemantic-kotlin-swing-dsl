@@ -1,9 +1,28 @@
 # xemantic-kotlin-swing-dsl
 
-![main](https://github.com/xemantic/xemantic-kotlin-swing-dsl/actions/workflows/build-main.yml/badge.svg)
-[![](https://dcbadge.limes.pink/api/server/https://discord.gg/vQktqqN2Vn?style=flat)](https://discord.gg/vQktqqN2Vn)
-
 _Express your Swing code easily in Kotlin_
+
+[<img alt="Maven Central Version" src="https://img.shields.io/maven-central/v/com.xemantic.kotlin/xemantic-kotlin-swing-dsl-core?style=for-the-badge">
+](https://central.sonatype.com/namespace/com.xemantic.kotlin)
+![GitHub Release Date](https://img.shields.io/github/release-date/xemantic/xemantic-kotlin-swing-dsl?style=for-the-badge)
+[<img alt="license" src="https://img.shields.io/github/license/thelumiereguy/ShaderShowcaseApp?color=blue&style=for-the-badge">]()
+
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/xemantic/xemantic-kotlin-swing-dsl/build-main.yml?style=for-the-badge)
+![GitHub branch check runs](https://img.shields.io/github/check-runs/xemantic/xemantic-kotlin-swing-dsl/main?style=for-the-badge)
+![GitHub commits since latest release](https://img.shields.io/github/commits-since/xemantic/xemantic-kotlin-swing-dsl/latest?style=for-the-badge)
+![GitHub last commit](https://img.shields.io/github/last-commit/xemantic/xemantic-kotlin-swing-dsl?style=for-the-badge)
+
+![GitHub contributors](https://img.shields.io/github/contributors/xemantic/xemantic-kotlin-swing-dsl?style=for-the-badge)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/t/xemantic/xemantic-kotlin-swing-dsl?style=for-the-badge)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/xemantic/xemantic-kotlin-swing-dsl?style=for-the-badge)
+![GitHub Created At](https://img.shields.io/github/created-at/xemantic/xemantic-kotlin-swing-dsl?style=for-the-badge)
+![kotlin version](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fxemantic%2Fxemantic-kotlin-swing-dsl%2Fmain%2Fgradle%2Flibs.versions.toml&query=versions.kotlin&style=for-the-badge&label=kotlin)
+![kotlinx-coroutines version](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fxemantic%2Fxemantic-kotlin-swing-dsl%2Fmain%2Fgradle%2Flibs.versions.toml&query=versions.kotlinxCoroutines&style=for-the-badge&label=kotlinx-coroutines)
+
+[![](https://dcbadge.limes.pink/api/server/https://discord.gg/vQktqqN2Vn)](https://discord.gg/vQktqqN2Vn)
+![Discord](https://img.shields.io/discord/811561179280965673?style=for-the-badge&link=https%3A%2F%2Fdiscord.gg%2FvQktqqN2Vn)
+[<img alt="X (formerly Twitter) Follow" src="https://img.shields.io/twitter/follow/KazikPogoda?link=https%3A%2F%2Fx.com%2FKazikPogoda">
+](https://x.com/KazikPogoda)
 
 ## Why?
 
@@ -42,12 +61,10 @@ import kotlinx.coroutines.flow.*
 import java.awt.Dimension
 import java.net.URI
 
-fun main() = MainWindow("My Browser") {
+fun main() = MainWindow("My Browser") { window ->
   val urlBox = TextField()
   val goButton = Button("Go!") { isEnabled = false }
-  val contentBox = TextArea {
-    preferredSize = Dimension(300, 300)
-  }
+  val contentBox = TextArea()
 
   urlBox.textChanges.listen { url ->
     goButton.isEnabled = url.isNotBlank()
@@ -74,13 +91,11 @@ fun main() = MainWindow("My Browser") {
       goButton.isEnabled = true
     }
 
-  Border.empty(4) {
-    BorderPanel {
-      layout {
-        hgap = 4
-        vgap = 4
-      }
-      north {
+  window.preferredSize = Dimension(300, 300)
+
+  BorderPanel {
+    north {
+      Border.empty(4) {
         BorderPanel {
           layout {
             hgap = 4
@@ -91,10 +106,9 @@ fun main() = MainWindow("My Browser") {
           east { goButton }
         }
       }
-      center { ScrollPane { contentBox } }
     }
+    center { ScrollPane { contentBox } }
   }
-
 }
 ```
 
