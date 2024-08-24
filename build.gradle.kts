@@ -18,8 +18,9 @@
  * see <https://www.gnu.org/licenses/>.
  */
 
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -31,6 +32,10 @@ plugins {
   alias(libs.plugins.dokka) apply false
   alias(libs.plugins.publish)
 }
+
+val javaTargetVersion = 17
+val kotlinTargetVersion = KotlinVersion.KOTLIN_2_0
+val jvmTargetVersion = JvmTarget.fromTarget("$javaTargetVersion")
 
 val githubAccount = "xemantic"
 val isReleaseBuild = !project.version.toString().endsWith("-SNAPSHOT")
@@ -60,19 +65,25 @@ subprojects {
     apply(plugin = "java")
   } else if (project.name != "demo") {
     apply(plugin = "org.jetbrains.kotlin.jvm")
-    tasks.named<KotlinCompilationTask<*>>("compileKotlin").configure {
-      compilerOptions {
-        apiVersion.set(KotlinVersion.KOTLIN_2_0)
-      }
-    }
   }
 
-  if (project.name != "demo") {
-    configure<JavaPluginExtension> {
-      toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+  tasks {
+
+    // set up according to https://jakewharton.com/gradle-toolchains-are-rarely-a-good-idea/
+    withType<KotlinJvmCompile> {
+      compilerOptions {
+        apiVersion = kotlinTargetVersion
+        languageVersion = kotlinTargetVersion
+        jvmTarget = jvmTargetVersion
+        freeCompilerArgs.add("-Xjdk-release=$javaTargetVersion")
+        progressiveMode = true
       }
     }
+
+    withType<JavaCompile> {
+      options.release = javaTargetVersion
+    }
+
   }
 
   if (project.name.startsWith(rootProject.name)) {
