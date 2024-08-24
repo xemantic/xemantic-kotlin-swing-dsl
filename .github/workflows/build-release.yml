@@ -18,10 +18,10 @@ jobs:
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
-        java-version: 21
+        java-version: 22
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v4
-    - name: Publish package
+    - name: Build
       run: ./gradlew -Pversion=${VERSION} build sourcesJar javadocJar publishToSonatype closeAndReleaseSonatypeStagingRepository
       env:
         ORG_GRADLE_PROJECT_githubActor: ${{ secrets.GITHUBACTOR }}
