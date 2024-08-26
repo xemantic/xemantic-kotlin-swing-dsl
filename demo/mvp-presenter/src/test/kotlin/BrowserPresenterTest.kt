@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlin.test.Test
 
-@OptIn(ExperimentalCoroutinesApi::class, DelicateCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 class BrowserPresenterTest {
 
   @Test

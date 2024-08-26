@@ -68,6 +68,38 @@ val Component.mouseMoves: Flow<MouseEvent> get() =
 val Component.mouseClicks: Flow<MouseEvent> get() =
   mouseEvents.filter { it.id == MouseEvent.MOUSE_CLICKED }
 
+val Component.mouseDrags: Flow<MouseEvent> get() =
+  mouseEvents.filter { it.id == MouseEvent.MOUSE_DRAGGED }
+
+val Component.mousePresses: Flow<MouseEvent> get() =
+  mouseEvents.filter { it.id == MouseEvent.MOUSE_PRESSED }
+
+val Component.mouseReleases: Flow<MouseEvent> get() =
+  mouseEvents.filter { it.id == MouseEvent.MOUSE_RELEASED }
+
+val Component.mouseEnters: Flow<MouseEvent> get() =
+  mouseEvents.filter { it.id == MouseEvent.MOUSE_ENTERED }
+
+val Component.mouseExits: Flow<MouseEvent> get() =
+  mouseEvents.filter { it.id == MouseEvent.MOUSE_EXITED }
+
+val Component.focusEvents: Flow<FocusEvent> get() = callbackFlow {
+  val listener = object : FocusListener {
+    override fun focusGained(e: FocusEvent) { trySend(e) }
+    override fun focusLost(e: FocusEvent) { trySend(e) }
+  }
+  addFocusListener(listener)
+  awaitClose {
+    removeFocusListener(listener)
+  }
+}
+
+val Component.focusGains: Flow<FocusEvent> get() =
+  focusEvents.filter { it.id == FocusEvent.FOCUS_GAINED }
+
+val Component.focusLosses: Flow<FocusEvent> get() =
+  focusEvents.filter { it.id == FocusEvent.FOCUS_LOST }
+
 val JTextField.actionEvents: Flow<ActionEvent> get() = callbackFlow {
   val listener = ActionListener { e -> trySend(e) }
   addActionListener(listener)
