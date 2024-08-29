@@ -31,7 +31,6 @@ jobs:
       uses: gradle/actions/setup-gradle@v4
 
     - name: Build
-      run: ./gradlew -Pversion=${VERSION} build sourcesJar javadocJar publishToSonatype closeAndReleaseSonatypeStagingRepository
       env:
         ORG_GRADLE_PROJECT_githubActor: ${{ secrets.GITHUBACTOR }}
         ORG_GRADLE_PROJECT_githubToken: ${{ secrets.GITHUBTOKEN }}
@@ -39,11 +38,14 @@ jobs:
         ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
         ORG_GRADLE_PROJECT_sonatypeUser: ${{ secrets.SONATYPE_USER }}
         ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
+      run: ./gradlew -Pversion=$VERSION build sourcesJar javadocJar publishToSonatype closeAndReleaseSonatypeStagingRepository
 
     - name: Find branch from tag
       id: find-branch
+      env:
+        TAG_NAME: ${{ github.event.release.tag_name }}
       run: |
-        BRANCH=$(git branch -r --contains ${{ github.event.release.tag_name }} | grep -v '\->' | sed 's/origin\///' | head -n 1)
+        BRANCH=$(git branch -r --contains $TAG_NAME | grep -v '\->' | sed 's/origin\///' | head -n 1)
         if [ -z "$BRANCH" ]; then
           echo "Branch not found for tag $TAG"
           exit 1
@@ -55,7 +57,7 @@ jobs:
       run: git checkout ${BRANCH}
 
     - name: Update README
-      run: sed -i 's/com\.xemantic\.kotlin:xemantic-kotlin-swing-dsl-\(core\|test\):[0-9]\+\(\.[0-9]\+\)*\>/com.xemantic.kotlin:xemantic-kotlin-swing-dsl-\1:${{ VERSION }}/g' README.md
+      run: sed -i 's/com\.xemantic\.kotlin:xemantic-kotlin-swing-dsl-\(core\|test\):[0-9]\+\(\.[0-9]\+\)*\>/com.xemantic.kotlin:xemantic-kotlin-swing-dsl-\1:$VERSION/g' README.md
 
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v6
