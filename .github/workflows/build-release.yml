@@ -63,5 +63,5 @@ jobs:
       uses: peter-evans/create-pull-request@v6
       with:
         token: ${{ secrets.WORKFLOW_SECRET }}
-        commit-message: README.md gradle dependencies update to ${{ VERSION }}
-        title: PR Action - README.md gradle dependencies update to ${{ VERSION }}
+        commit-message: README.md gradle dependencies update to ${{ env.VERSION }}
+        title: PR Action - README.md gradle dependencies update to ${{ env.VERSION }}
