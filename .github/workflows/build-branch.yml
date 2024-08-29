@@ -7,7 +7,7 @@ on:
     branches-ignore:
       - main
 jobs:
-  build_main:
+  build_branch:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout sources
