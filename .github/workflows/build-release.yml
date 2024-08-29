@@ -35,7 +35,7 @@ jobs:
         ORG_GRADLE_PROJECT_sonatypeUser: ${{ secrets.SONATYPE_USER }}
         ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
     - name: Update README
-      run: sed -i 's/com\.xemantic\.kotlin:xemantic-kotlin-swing-dsl-\(core\|test\):[0-9]\+\(\.[0-9]\+\)*\>/com.xemantic.kotlin:xemantic-kotlin-swing-dsl-\1:1.2/g' README.md
+      run: sed -i 's/com\.xemantic\.kotlin:xemantic-kotlin-swing-dsl-\(core\|test\):[0-9]\+\(\.[0-9]\+\)*\>/com.xemantic.kotlin:xemantic-kotlin-swing-dsl-\1:${VERSION}/g' README.md
     - name: Commit README
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
