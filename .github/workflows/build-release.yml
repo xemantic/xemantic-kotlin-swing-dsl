@@ -17,7 +17,9 @@ jobs:
         echo "VERSION=$VERSION" >> $GITHUB_ENV
     - name: Checkout sources
       uses: actions/checkout@v4.1.7
-    - run: git switch -
+      with:
+        fetch-depth: 0
+#    - run: git switch -
     - name: Setup Java
       uses: actions/setup-java@v4.2.2
       with:
