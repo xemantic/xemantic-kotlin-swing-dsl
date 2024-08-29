@@ -48,7 +48,6 @@ jobs:
           echo "Branch not found for tag $TAG"
           exit 1
         fi
-        echo "::set-output name=branch::$BRANCH"        
         echo Branch: $BRANCH
         echo "BRANCH=$BRANCH" >> $GITHUB_ENV
 
@@ -56,11 +55,11 @@ jobs:
       run: git checkout ${BRANCH}
 
     - name: Update README
-      run: sed -i 's/com\.xemantic\.kotlin:xemantic-kotlin-swing-dsl-\(core\|test\):[0-9]\+\(\.[0-9]\+\)*\>/com.xemantic.kotlin:xemantic-kotlin-swing-dsl-\1:${VERSION}/g' README.md
+      run: sed -i 's/com\.xemantic\.kotlin:xemantic-kotlin-swing-dsl-\(core\|test\):[0-9]\+\(\.[0-9]\+\)*\>/com.xemantic.kotlin:xemantic-kotlin-swing-dsl-\1:${{ VERSION }}/g' README.md
 
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v6
       with:
         token: ${{ secrets.WORKFLOW_SECRET }}
-        commit-message: README.md gradle dependencies update to ${VERSION}
-        title: PR Action - README.md gradle dependencies update to ${VERSION}
+        commit-message: README.md gradle dependencies update to ${{ VERSION }}
+        title: PR Action - README.md gradle dependencies update to ${{ VERSION }}
