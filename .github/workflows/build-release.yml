@@ -49,15 +49,18 @@ jobs:
           exit 1
         fi
         echo "::set-output name=branch::$BRANCH"        
+        echo Branch: $BRANCH
+        echo "BRANCH=$BRANCH" >> $GITHUB_ENV
 
     - name: Checkout branch HEAD
-      run: git checkout ${{ steps.find-branch.outputs.branch }}
+      run: git checkout ${BRANCH}
 
     - name: Update README
       run: sed -i 's/com\.xemantic\.kotlin:xemantic-kotlin-swing-dsl-\(core\|test\):[0-9]\+\(\.[0-9]\+\)*\>/com.xemantic.kotlin:xemantic-kotlin-swing-dsl-\1:${VERSION}/g' README.md
 
-    - name: Commit README
-      uses: stefanzweifel/git-auto-commit-action@v5
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v6
       with:
-        commit_message: README.md version updated to ${VERSION}
-        file_pattern: 'README.md'
+        token: ${{ secrets.WORKFLOW_SECRET }}
+        commit-message: README.md gradle dependencies update to ${VERSION}
+        title: PR Action - README.md gradle dependencies update to ${VERSION}
