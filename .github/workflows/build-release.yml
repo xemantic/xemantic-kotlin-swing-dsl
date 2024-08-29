@@ -6,6 +6,10 @@ on:
 jobs:
   build_release:
     runs-on: ubuntu-latest
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
     steps:
     - name: Write release version
       run: |
@@ -30,3 +34,10 @@ jobs:
         ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
         ORG_GRADLE_PROJECT_sonatypeUser: ${{ secrets.SONATYPE_USER }}
         ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
+    - name: Update README
+      run: sed -i 's/com\.xemantic\.kotlin:xemantic-kotlin-swing-dsl-\(core\|test\):[0-9]\+\(\.[0-9]\+\)*\>/com.xemantic.kotlin:xemantic-kotlin-swing-dsl-\1:1.2/g' README.md
+    - name: Commit README
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: README.md version updated to ${VERSION}
+        file_pattern: 'README.md'

@@ -40,7 +40,7 @@ Add to your `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-  implementation("com.xemantic.kotlin:xemantic-kotlin-swing-dsl-core:1.1")
+  implementation("com.xemantic.kotlin:xemantic-kotlin-swing-dsl-core:1.2")
   runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.1")
 }
 ```
@@ -156,6 +156,6 @@ Add this dependency to your `build.gradle.kts` for testing support:
 
 ```kotlin
 dependencies {
-  testImplementation("com.xemantic.kotlin:xemantic-kotlin-swing-dsl-test:1.1")
+  testImplementation("com.xemantic.kotlin:xemantic-kotlin-swing-dsl-test:1.2")
 }
 ```
