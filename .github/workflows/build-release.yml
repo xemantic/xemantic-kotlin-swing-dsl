@@ -57,7 +57,7 @@ jobs:
       run: git checkout ${BRANCH}
 
     - name: Update README
-      run: sed -i 's/com\.xemantic\.kotlin:xemantic-kotlin-swing-dsl-\(core\|test\):[0-9]\+\(\.[0-9]\+\)*\>/com.xemantic.kotlin:xemantic-kotlin-swing-dsl-\1:$VERSION/g' README.md
+      run: sed -i "s/com\.xemantic\.kotlin:xemantic-kotlin-swing-dsl-\(core\|test\):[0-9]\+\(\.[0-9]\+\)*\>/com.xemantic.kotlin:xemantic-kotlin-swing-dsl-\1:$VERSION/g" README.md
 
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v6
