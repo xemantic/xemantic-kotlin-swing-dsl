@@ -1,8 +1,7 @@
 name: Build release
 on:
-  push:
-    tags:
-      - '**'
+  release:
+    types: [published]
 jobs:
   build_release:
     runs-on: ubuntu-latest
@@ -18,8 +17,7 @@ jobs:
         echo "VERSION=$VERSION" >> $GITHUB_ENV
     - name: Checkout sources
       uses: actions/checkout@v4.1.7
-      with:
-        ref: ${{ github.head_ref }}
+    - run: git switch -
     - name: Setup Java
       uses: actions/setup-java@v4.2.2
       with:
