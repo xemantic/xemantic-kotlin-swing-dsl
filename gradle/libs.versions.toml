@@ -1,4 +1,7 @@
 [versions]
+kotlinTarget = "2.0"
+javaTarget = "17"
+
 kotlin = "2.0.20"
 kotlinxCoroutines = "1.8.1"
 kotest = "5.9.1"

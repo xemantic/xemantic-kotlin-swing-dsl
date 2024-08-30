@@ -33,11 +33,11 @@ plugins {
   alias(libs.plugins.publish)
 }
 
-val javaTargetVersion = 17
-val kotlinTargetVersion = KotlinVersion.KOTLIN_2_0
-val jvmTargetVersion = JvmTarget.fromTarget("$javaTargetVersion")
-
 val githubAccount = "xemantic"
+
+val javaTarget = libs.versions.javaTarget.get()
+val kotlinTarget = KotlinVersion.fromVersion(libs.versions.kotlinTarget.get())
+
 val isReleaseBuild = !project.version.toString().endsWith("-SNAPSHOT")
 val githubActor: String? by project
 val githubToken: String? by project
@@ -72,26 +72,28 @@ subprojects {
     // set up according to https://jakewharton.com/gradle-toolchains-are-rarely-a-good-idea/
     withType<KotlinJvmCompile> {
       compilerOptions {
-        apiVersion = kotlinTargetVersion
-        languageVersion = kotlinTargetVersion
-        jvmTarget = jvmTargetVersion
-        freeCompilerArgs.add("-Xjdk-release=$javaTargetVersion")
+        apiVersion = kotlinTarget
+        languageVersion = kotlinTarget
+        jvmTarget = JvmTarget.fromTarget(javaTarget)
+        freeCompilerArgs.add("-Xjdk-release=$javaTarget")
         progressiveMode = true
       }
     }
 
     withType<JavaCompile> {
-      options.release = javaTargetVersion
+      options.release = javaTarget.toInt()
     }
 
   }
 
   if (project.name.startsWith(rootProject.name)) {
 
-    apply(plugin = "maven-publish")
-    apply(plugin = "java-library")
-    apply(plugin = "org.jetbrains.dokka")
-    apply(plugin = "signing")
+    apply {
+      plugin("maven-publish")
+      plugin("java-library")
+      plugin("org.jetbrains.dokka")
+      plugin("signing")
+    }
 
     configure<JavaPluginExtension> {
       withJavadocJar()
