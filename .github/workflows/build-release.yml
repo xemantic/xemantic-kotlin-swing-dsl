@@ -28,7 +28,7 @@ jobs:
         java-version: 22
 
     - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v4
+      uses: gradle/actions/setup-gradle@v4.0.1
 
     - name: Build
       env:
@@ -60,7 +60,7 @@ jobs:
       run: sed -i "s/com\.xemantic\.kotlin:xemantic-kotlin-swing-dsl-\(core\|test\):[0-9]\+\(\.[0-9]\+\)*\>/com.xemantic.kotlin:xemantic-kotlin-swing-dsl-\1:$VERSION/g" README.md
 
     - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v6
+      uses: peter-evans/create-pull-request@v7.0.1
       with:
         token: ${{ secrets.WORKFLOW_SECRET }}
         commit-message: README.md gradle dependencies update to ${{ env.VERSION }}
