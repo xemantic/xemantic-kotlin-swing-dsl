@@ -20,7 +20,6 @@
 package com.xemantic.kotlin.swing.demo.mvp
 
 import com.xemantic.kotlin.swing.Action
-import com.xemantic.kotlin.swing.action
 import com.xemantic.kotlin.swing.dsl.test.runSwingTest
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
@@ -74,7 +73,7 @@ class BrowserPresenterTest {
     view.urlEdits.emit("https://example.com")
 
     // when
-    view.goActions.emit(action)
+    view.goActions.emit(Action)
     advanceUntilIdle()
 
     // then
@@ -96,7 +95,7 @@ class BrowserPresenterTest {
     view.urlEdits.emit("https://example.com")
 
     // when
-    view.urlActions.emit(action)
+    view.urlActions.emit(Action)
     advanceUntilIdle()
 
     // then
@@ -150,7 +149,7 @@ class BrowserPresenterTest {
     view.urlEdits.emit("https://example.com")
 
     // when
-    view.urlActions.emit(action)
+    view.urlActions.emit(Action)
     advanceUntilIdle()
 
     // then
@@ -185,7 +184,7 @@ class BrowserPresenterTest {
     view.urlEdits.emit("foo")
 
     // when
-    view.urlActions.emit(action)
+    view.urlActions.emit(Action)
     advanceUntilIdle()
 
     // then

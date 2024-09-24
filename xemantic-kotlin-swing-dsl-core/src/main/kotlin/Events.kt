@@ -33,14 +33,9 @@ import javax.swing.text.JTextComponent
  * Represents and action, like click or touch event, without
  * any additional attributes.
  */
-class Action internal constructor()
+object Action
 
-/**
- * An action instance.
- */
-val action = Action()
-
-val Flow<ActionEvent>.asActions get() = map { action }
+val Flow<ActionEvent>.asActions get() = map { Action }
 
 val Component.mouseEvents: Flow<MouseEvent> get() = callbackFlow {
   val listener = object : MouseListener {
