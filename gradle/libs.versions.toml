@@ -2,9 +2,9 @@
 kotlinTarget = "2.0"
 javaTarget = "17"
 
-kotlin = "2.0.20"
-kotlinxCoroutines = "1.8.1"
-kotest = "5.9.1"
+kotlin = "2.1.0"
+kotlinxCoroutines = "1.10.1"
+kotest = "6.0.0.M1"
 
 versionsPlugin = "0.51.0"
 dokkaPlugin = "1.9.20"
